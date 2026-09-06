@@ -1,4 +1,3 @@
-
 // ========================================
 // LOAD ENVIRONMENT VARIABLES
 // ========================================
@@ -14,7 +13,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const session = require("express-session");
-const MongoStore = require("connect-mongo");
+const MongoStore = require("connect-mongo").default;
 
 
 // ========================================
@@ -53,9 +52,7 @@ const app = express();
 // ========================================
 
 if (process.env.NODE_ENV === "production") {
-
     app.set("trust proxy", 1);
-
 }
 
 
@@ -70,7 +67,6 @@ if (!process.env.MONGO_URI) {
     );
 
     process.exit(1);
-
 }
 
 
@@ -81,7 +77,6 @@ if (!process.env.SESSION_SECRET) {
     );
 
     process.exit(1);
-
 }
 
 
@@ -366,7 +361,6 @@ app.get(
                     }
 
 
-                    // IMPORTANT:
                     // Pricing model uses "fullDay"
                     // Homepage object uses "full"
 
@@ -674,4 +668,3 @@ mongoose
 
         }
     );
-
