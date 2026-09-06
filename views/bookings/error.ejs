@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Kavika - Booking Error</title>
+<link rel="icon" href="images/kavika.jpeg">
+    <link
+        rel="stylesheet"
+        href="/css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+    <%- include("../includes/navbar.ejs") %>
+
+
+    <main class="booking-error-page">
+
+        <div class="booking-error-card">
+
+            <div class="error-icon">
+                ⚠️
+            </div>
+
+
+            <p class="eyebrow">
+                KAVIKA LIBRARY
+            </p>
+
+
+            <h1>
+                Seat Already Booked
+            </h1>
+
+
+            <p class="error-message">
+                Sorry, this seat is not available for
+                the selected dates.
+            </p>
+
+
+            <div class="booking-error-details">
+
+                <p>
+                    <strong>Booked From</strong>
+
+                    <span>
+                        <%= startDate %>
+                    </span>
+                </p>
+
+
+                <p>
+                    <strong>Booked Until</strong>
+
+                    <span>
+                        <%= endDate %>
+                    </span>
+                </p>
+
+            </div>
+
+
+            <div class="error-actions">
+
+                <a
+                    href="/seats"
+                    class="error-btn primary-error-btn"
+                >
+                    ← Choose Another Seat
+                </a>
+
+
+                <a
+                    href="/bookings/new"
+                    class="error-btn secondary-error-btn"
+                >
+                    Try Another Date
+                </a>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <%- include("../includes/footer.ejs") %>
+
+</body>
+
+</html>

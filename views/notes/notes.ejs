@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>KAVIKA - Notes</title>
+<link rel="icon" type="image/jpeg" href="/images/kavika.jpeg" >
+    <link rel="stylesheet" href="/css/style.css">
+
+</head>
+
+<body>
+
+    <%- include("../includes/navbar.ejs") %>
+
+
+    <main class="user-notes-page">
+
+        <section class="user-notes-container">
+
+
+            <!-- HEADER -->
+
+            <div class="user-notes-header">
+
+                <p class="user-notes-small-title">
+                    STUDY MATERIAL
+                </p>
+
+                <h1>
+                    Library Notes
+                </h1>
+
+                <p>
+                    Find and access your study material
+                    in PDF format.
+                </p>
+
+            </div>
+
+
+            <!-- NOTES -->
+
+            <% if (notes.length === 0) { %>
+
+                <div class="user-no-notes">
+
+                    <div class="user-no-notes-icon">
+                        📚
+                    </div>
+
+                    <h2>
+                        No Notes Available
+                    </h2>
+
+                    <p>
+                        Study material will be added soon.
+                    </p>
+
+                </div>
+
+            <% } else { %>
+
+
+                <div class="user-notes-grid">
+
+                    <% notes.forEach(note => { %>
+
+                        <article class="user-note-card">
+
+
+                            <div class="user-note-top">
+
+                                <div class="user-note-pdf">
+                                    PDF
+                                </div>
+
+                                <span class="user-note-date">
+                                    <%= new Date(note.createdAt).toLocaleDateString() %>
+                                </span>
+
+                            </div>
+
+
+                            <div class="user-note-content">
+
+                                <h2>
+                                    <%= note.title %>
+                                </h2>
+
+                                <p>
+                                    <%= note.description %>
+                                </p>
+
+                            </div>
+
+
+                            <div class="user-note-actions">
+
+                                <a
+                                    href="<%= note.file %>"
+                                    target="_blank"
+                                    class="user-note-view"
+                                >
+                                    View PDF
+                                    →
+                                </a>
+
+
+                                <a
+                                    href="<%= note.file %>"
+                                    download
+                                    class="user-note-download"
+                                >
+                                    Download
+                                </a>
+
+                            </div>
+
+
+                        </article>
+
+                    <% }) %>
+
+                </div>
+
+
+            <% } %>
+
+
+        </section>
+
+    </main>
+
+
+</body>
+
+</html>

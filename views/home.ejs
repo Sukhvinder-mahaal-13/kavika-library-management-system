@@ -1,0 +1,2052 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+<link rel="icon" href="images/kavika.jpeg">
+<title>KAVIKA - Library</title>
+
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+>
+
+<link
+    rel="stylesheet"
+    href="/css/variables.css"
+>
+
+<link
+    rel="stylesheet"
+    href="/css/style.css"
+>
+
+
+<!-- ==================================================
+     KAVIKA CINEMATIC BOOK INTRO
+=================================================== -->
+
+<style>
+
+    /* ==================================================
+       INTRO
+    ================================================== */
+
+    #kavika-intro {
+
+        position: fixed;
+
+        inset: 0;
+
+        z-index: 999999;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        overflow: hidden;
+
+        background:
+            radial-gradient(
+                circle at 50% 45%,
+                #303030 0%,
+                #111111 35%,
+                #050505 68%,
+                #000000 100%
+            );
+
+        animation:
+            introDisappear 1.2s ease 5.9s forwards;
+
+    }
+
+
+    /* ==================================================
+       BACKGROUND GLOW
+    ================================================== */
+
+    .intro-glow {
+
+        position: absolute;
+
+        width: 650px;
+
+        height: 650px;
+
+        border-radius: 50%;
+
+        background:
+            radial-gradient(
+                circle,
+                rgba(255,255,255,.13),
+                rgba(255,255,255,.035) 35%,
+                transparent 70%
+            );
+
+        filter: blur(12px);
+
+        animation:
+            glowMove
+            4s
+            ease-in-out
+            infinite;
+
+    }
+
+
+    /* ==================================================
+       SMALL PARTICLES
+    ================================================== */
+
+    .intro-particles {
+
+        position: absolute;
+
+        inset: 0;
+
+        pointer-events: none;
+
+    }
+
+
+    .intro-particles span {
+
+        position: absolute;
+
+        width: 3px;
+
+        height: 3px;
+
+        border-radius: 50%;
+
+        background: rgba(255,255,255,.35);
+
+        animation:
+            particleFloat
+            4s
+            ease-in-out
+            infinite;
+
+    }
+
+
+    .intro-particles span:nth-child(1) {
+        left: 15%;
+        top: 30%;
+        animation-delay: .2s;
+    }
+
+    .intro-particles span:nth-child(2) {
+        left: 80%;
+        top: 24%;
+        animation-delay: .8s;
+    }
+
+    .intro-particles span:nth-child(3) {
+        left: 24%;
+        top: 75%;
+        animation-delay: 1.3s;
+    }
+
+    .intro-particles span:nth-child(4) {
+        left: 75%;
+        top: 70%;
+        animation-delay: 1.8s;
+    }
+
+    .intro-particles span:nth-child(5) {
+        left: 90%;
+        top: 48%;
+        animation-delay: 2.2s;
+    }
+
+    .intro-particles span:nth-child(6) {
+        left: 10%;
+        top: 55%;
+        animation-delay: 2.7s;
+    }
+
+
+    /* ==================================================
+       BOOK SCENE
+    ================================================== */
+
+    .book-scene {
+
+        position: relative;
+
+        width: 430px;
+
+        height: 540px;
+
+        perspective: 2200px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+    }
+
+
+    /* ==================================================
+       BOOK
+    ================================================== */
+
+    .kavika-book {
+
+        position: relative;
+
+        width: 350px;
+
+        height: 470px;
+
+        transform-style: preserve-3d;
+
+        transform:
+            rotateX(8deg)
+            rotateY(-12deg)
+            rotateZ(-1deg);
+
+        animation:
+            bookEnter
+            1.5s
+            cubic-bezier(.16,1,.3,1)
+            forwards;
+
+    }
+
+
+    /* ==================================================
+       BOOK SHADOW
+    ================================================== */
+
+    .book-shadow {
+
+        position: absolute;
+
+        left: -30px;
+
+        bottom: -55px;
+
+        width: 410px;
+
+        height: 55px;
+
+        border-radius: 50%;
+
+        background:
+            radial-gradient(
+                ellipse,
+                rgba(0,0,0,.9),
+                transparent 70%
+            );
+
+        filter: blur(10px);
+
+        transform:
+            rotateX(70deg);
+
+        animation:
+            shadowAnimation
+            3s
+            ease-in-out
+            1.2s
+            infinite;
+
+    }
+
+
+    /* ==================================================
+       BACK COVER
+    ================================================== */
+
+    .book-back {
+
+        position: absolute;
+
+        inset: 0;
+
+        border-radius:
+            6px
+            16px
+            16px
+            6px;
+
+        background:
+            linear-gradient(
+                145deg,
+                #292929,
+                #090909 45%,
+                #171717
+            );
+
+        border:
+            1px solid
+            rgba(255,255,255,.14);
+
+        box-shadow:
+            18px 25px 55px rgba(0,0,0,.8);
+
+    }
+
+
+    /* ==================================================
+       PAGE BLOCK
+    ================================================== */
+
+    .book-pages {
+
+        position: absolute;
+
+        top: 8px;
+
+        right: -5px;
+
+        bottom: 8px;
+
+        left: 8px;
+
+        border-radius:
+            3px
+            13px
+            13px
+            3px;
+
+        background:
+            repeating-linear-gradient(
+                to bottom,
+                #f8f3e8 0px,
+                #f8f3e8 3px,
+                #ddd5c7 4px,
+                #f4eee3 5px
+            );
+
+        box-shadow:
+            inset -10px 0 15px rgba(0,0,0,.12);
+
+        transform:
+            translateZ(-5px);
+
+    }
+
+
+    /* ==================================================
+       INNER LEFT PAGE
+    ================================================== */
+
+    .inside-page {
+
+        position: absolute;
+
+        inset: 9px;
+
+        border-radius:
+            4px
+            13px
+            13px
+            4px;
+
+        background:
+            linear-gradient(
+                90deg,
+                #d8d0c2,
+                #faf7ef 8%,
+                #f7f2e8 90%,
+                #d9d1c3
+            );
+
+        transform:
+            translateZ(1px);
+
+        box-shadow:
+            inset 0 0 25px rgba(0,0,0,.12);
+
+    }
+
+
+    /* ==================================================
+       INSIDE PAGE DESIGN
+    ================================================== */
+
+    .inside-content {
+
+        position: absolute;
+
+        inset: 35px;
+
+        border:
+            1px solid
+            rgba(80,70,60,.2);
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+
+        justify-content: center;
+
+        text-align: center;
+
+        color: #29251f;
+
+    }
+
+
+    .inside-small {
+
+        font-size: 9px;
+
+        letter-spacing: 4px;
+
+        opacity: .55;
+
+        margin-bottom: 25px;
+
+    }
+
+
+    .inside-content h2 {
+
+        margin: 0;
+
+        font-family:
+            Georgia,
+            serif;
+
+        font-size: 38px;
+
+        letter-spacing: 6px;
+
+        font-weight: 500;
+
+    }
+
+
+    .inside-line {
+
+        width: 55px;
+
+        height: 1px;
+
+        margin: 20px 0;
+
+        background: rgba(30,30,30,.35);
+
+    }
+
+
+    .inside-content p {
+
+        margin: 0;
+
+        font-size: 9px;
+
+        letter-spacing: 3px;
+
+        opacity: .55;
+
+    }
+
+
+    /* ==================================================
+       FRONT COVER
+    ================================================== */
+
+    .kavika-cover {
+
+        position: absolute;
+
+        inset: 0;
+
+        z-index: 20;
+
+        transform-origin: left center;
+
+        transform-style: preserve-3d;
+
+        border-radius:
+            6px
+            16px
+            16px
+            6px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #292929 0%,
+                #101010 35%,
+                #030303 70%,
+                #1b1b1b 100%
+            );
+
+        border:
+            1px solid
+            rgba(255,255,255,.22);
+
+        box-shadow:
+            12px 20px 45px rgba(0,0,0,.75),
+            inset 0 0 40px rgba(255,255,255,.035);
+
+        backface-visibility: hidden;
+
+        animation:
+            openBook
+            2.8s
+            cubic-bezier(.65,.05,.25,1)
+            1.8s
+            forwards;
+
+    }
+
+
+    /* ==================================================
+       COVER SHINE
+    ================================================== */
+
+    .cover-shine {
+
+        position: absolute;
+
+        inset: 0;
+
+        border-radius: inherit;
+
+        background:
+            linear-gradient(
+                120deg,
+                transparent 20%,
+                rgba(255,255,255,.10) 45%,
+                transparent 65%
+            );
+
+        transform:
+            translateX(-120%);
+
+        animation:
+            coverShine
+            1.8s
+            ease
+            2s
+            forwards;
+
+    }
+
+
+    /* ==================================================
+       COVER BORDER
+    ================================================== */
+
+    .cover-border {
+
+        position: absolute;
+
+        inset: 23px;
+
+        border:
+            1px solid
+            rgba(255,255,255,.2);
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+    }
+
+
+    .cover-border::before {
+
+        content: "";
+
+        position: absolute;
+
+        inset: 7px;
+
+        border:
+            1px solid
+            rgba(255,255,255,.06);
+
+    }
+
+
+    /* ==================================================
+       COVER CONTENT
+    ================================================== */
+
+    .cover-content {
+
+        position: relative;
+
+        z-index: 5;
+
+        text-align: center;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+
+    }
+
+
+    .cover-est {
+
+        font-family: Arial, sans-serif;
+
+        font-size: 9px;
+
+        letter-spacing: 6px;
+
+        color:
+            rgba(255,255,255,.48);
+
+        margin-bottom: 32px;
+
+    }
+
+
+    .cover-content h1 {
+
+        margin: 0;
+
+        font-family:
+            Georgia,
+            "Times New Roman",
+            serif;
+
+        font-size: 58px;
+
+        line-height: 1;
+
+        font-weight: 500;
+
+        letter-spacing: 9px;
+
+        color: #f4f0e8;
+
+        text-shadow:
+            0 4px 20px rgba(255,255,255,.08);
+
+    }
+
+
+    .cover-library {
+
+        margin-top: 18px;
+
+        font-family: Arial, sans-serif;
+
+        font-size: 11px;
+
+        letter-spacing: 9px;
+
+        color:
+            rgba(255,255,255,.68);
+
+    }
+
+
+    .cover-line {
+
+        width: 65px;
+
+        height: 1px;
+
+        margin:
+            28px
+            0
+            20px;
+
+        background:
+            rgba(255,255,255,.42);
+
+    }
+
+
+    .cover-tagline {
+
+        font-family: Arial, sans-serif;
+
+        font-size: 8px;
+
+        letter-spacing: 4px;
+
+        color:
+            rgba(255,255,255,.42);
+
+    }
+
+
+    /* ==================================================
+       SPINE
+    ================================================== */
+
+    .book-spine {
+
+        position: absolute;
+
+        left: -7px;
+
+        top: 5px;
+
+        bottom: 5px;
+
+        width: 12px;
+
+        z-index: 25;
+
+        border-radius: 5px 0 0 5px;
+
+        background:
+            linear-gradient(
+                90deg,
+                #050505,
+                #252525,
+                #080808
+            );
+
+        box-shadow:
+            inset -2px 0 3px rgba(255,255,255,.08);
+
+    }
+
+
+    /* ==================================================
+       OPEN BOOK LIGHT
+    ================================================== */
+
+    .book-light {
+
+        position: absolute;
+
+        z-index: 1;
+
+        width: 420px;
+
+        height: 420px;
+
+        border-radius: 50%;
+
+        background:
+            radial-gradient(
+                circle,
+                rgba(255,255,255,.12),
+                transparent 65%
+            );
+
+        filter: blur(25px);
+
+        opacity: 0;
+
+        animation:
+            bookLight
+            2s
+            ease
+            3.1s
+            forwards;
+
+    }
+
+
+    /* ==================================================
+       BOOK ENTRANCE
+    ================================================== */
+
+    @keyframes bookEnter {
+
+        0% {
+
+            opacity: 0;
+
+            transform:
+                rotateX(35deg)
+                rotateY(-38deg)
+                rotateZ(-5deg)
+                translateY(100px)
+                scale(.65);
+
+        }
+
+        65% {
+
+            opacity: 1;
+
+        }
+
+        100% {
+
+            opacity: 1;
+
+            transform:
+                rotateX(8deg)
+                rotateY(-12deg)
+                rotateZ(-1deg)
+                translateY(0)
+                scale(1);
+
+        }
+
+    }
+
+
+    /* ==================================================
+       FULL BOOK OPENING
+    ================================================== */
+
+    @keyframes openBook {
+
+        0% {
+
+            transform:
+                rotateY(0deg);
+
+        }
+
+        15% {
+
+            transform:
+                rotateY(-5deg);
+
+        }
+
+        38% {
+
+            transform:
+                rotateY(-35deg);
+
+        }
+
+        62% {
+
+            transform:
+                rotateY(-105deg);
+
+        }
+
+        82% {
+
+            transform:
+                rotateY(-155deg);
+
+        }
+
+        100% {
+
+            transform:
+                rotateY(-180deg);
+
+        }
+
+    }
+
+
+    /* ==================================================
+       COVER SHINE
+    ================================================== */
+
+    @keyframes coverShine {
+
+        0% {
+
+            transform:
+                translateX(-130%);
+
+        }
+
+        100% {
+
+            transform:
+                translateX(130%);
+
+        }
+
+    }
+
+
+    /* ==================================================
+       LIGHT
+    ================================================== */
+
+    @keyframes bookLight {
+
+        0% {
+
+            opacity: 0;
+
+            transform: scale(.5);
+
+        }
+
+        50% {
+
+            opacity: 1;
+
+            transform: scale(1);
+
+        }
+
+        100% {
+
+            opacity: .65;
+
+            transform: scale(1.15);
+
+        }
+
+    }
+
+
+    /* ==================================================
+       GLOW
+    ================================================== */
+
+    @keyframes glowMove {
+
+        0%,
+        100% {
+
+            transform:
+                scale(.8);
+
+            opacity: .55;
+
+        }
+
+        50% {
+
+            transform:
+                scale(1.15);
+
+            opacity: 1;
+
+        }
+
+    }
+
+
+    /* ==================================================
+       SHADOW
+    ================================================== */
+
+    @keyframes shadowAnimation {
+
+        0%,
+        100% {
+
+            transform:
+                rotateX(70deg)
+                scaleX(1);
+
+            opacity: .75;
+
+        }
+
+        50% {
+
+            transform:
+                rotateX(70deg)
+                scaleX(.82);
+
+            opacity: .5;
+
+        }
+
+    }
+
+
+    /* ==================================================
+       PARTICLES
+    ================================================== */
+
+    @keyframes particleFloat {
+
+        0%,
+        100% {
+
+            transform:
+                translateY(0)
+                scale(.7);
+
+            opacity: .2;
+
+        }
+
+        50% {
+
+            transform:
+                translateY(-30px)
+                scale(1.4);
+
+            opacity: .8;
+
+        }
+
+    }
+
+
+    /* ==================================================
+       INTRO DISAPPEAR
+    ================================================== */
+
+    @keyframes introDisappear {
+
+        0% {
+
+            opacity: 1;
+
+            visibility: visible;
+
+        }
+
+        70% {
+
+            opacity: 1;
+
+        }
+
+        100% {
+
+            opacity: 0;
+
+            visibility: hidden;
+
+        }
+
+    }
+
+
+    /* ==================================================
+       WELCOME
+    ================================================== */
+
+    .home-welcome {
+
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 5px;
+
+        margin-bottom: 18px;
+
+        padding: 8px 15px;
+
+        border:
+            1px solid
+            rgba(255,255,255,.14);
+
+        border-radius: 999px;
+
+        background:
+            rgba(255,255,255,.045);
+
+        color: #fff;
+
+        font-size: 14px;
+
+        font-weight: 500;
+
+        letter-spacing: .2px;
+
+        backdrop-filter: blur(8px);
+
+        animation:
+            welcomeAppear
+            .8s
+            ease
+            5.8s
+            both;
+
+    }
+
+
+    .home-welcome strong {
+
+        font-weight: 700;
+
+    }
+
+
+    @keyframes welcomeAppear {
+
+        from {
+
+            opacity: 0;
+
+            transform:
+                translateY(-10px);
+
+        }
+
+        to {
+
+            opacity: 1;
+
+            transform:
+                translateY(0);
+
+        }
+
+    }
+
+
+    /* ==================================================
+       MOBILE
+    ================================================== */
+
+    @media (max-width: 600px) {
+
+        .book-scene {
+
+            width: 320px;
+
+            height: 430px;
+
+        }
+
+        .kavika-book {
+
+            width: 275px;
+
+            height: 370px;
+
+        }
+
+        .book-shadow {
+
+            width: 320px;
+
+            left: -22px;
+
+        }
+
+        .cover-border {
+
+            inset: 17px;
+
+        }
+
+        .cover-est {
+
+            font-size: 7px;
+
+            letter-spacing: 4px;
+
+            margin-bottom: 23px;
+
+        }
+
+        .cover-content h1 {
+
+            font-size: 43px;
+
+            letter-spacing: 6px;
+
+        }
+
+        .cover-library {
+
+            font-size: 8px;
+
+            letter-spacing: 6px;
+
+        }
+
+        .cover-line {
+
+            margin:
+                22px
+                0
+                16px;
+
+        }
+
+        .cover-tagline {
+
+            font-size: 6px;
+
+            letter-spacing: 2px;
+
+        }
+
+    }
+
+</style>
+
+
+</head>
+
+<body>
+
+<!-- ==================================================
+     KAVIKA INTRO
+================================================== -->
+
+<div id="kavika-intro">
+
+
+<div class="intro-glow"></div>
+
+
+<div class="intro-particles">
+
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+
+</div>
+
+
+<div class="book-light"></div>
+
+
+<div class="book-scene">
+
+
+    <div class="kavika-book">
+
+
+        <div class="book-shadow"></div>
+
+
+        <div class="book-back"></div>
+
+
+        <div class="book-pages"></div>
+
+
+        <div class="inside-page">
+
+            <div class="inside-content">
+
+                <div class="inside-small">
+                    WELCOME TO
+                </div>
+
+                <h2>
+                    KAVIKA
+                </h2>
+
+                <div class="inside-line"></div>
+
+                <p>
+                    STUDY • FOCUS • GROW
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="book-spine"></div>
+
+
+        <!-- FRONT COVER -->
+
+        <div class="kavika-cover">
+
+
+            <div class="cover-shine"></div>
+
+
+            <div class="cover-border">
+
+
+                <div class="cover-content">
+
+
+                    <div class="cover-est">
+                        EST. 2026
+                    </div>
+
+
+                    <h1>
+                        KAVIKA
+                    </h1>
+
+
+                    <div class="cover-library">
+                        LIBRARY
+                    </div>
+
+
+                    <div class="cover-line"></div>
+
+
+                    <div class="cover-tagline">
+                        STUDY • FOCUS • GROW
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+</div>
+
+<!-- ==================================================
+     NAVBAR
+================================================== -->
+
+<%- include("./includes/navbar.ejs") %>
+
+<main>
+
+<!-- ==================================================
+     HERO
+================================================== -->
+
+<section class="hero">
+
+<div class="hero-content">
+
+
+    <% if (userName) { %>
+
+        <div class="home-welcome">
+
+            Welcome
+
+            <strong>
+                <%= userName %>
+            </strong>
+
+            Ji 👋
+
+        </div>
+
+    <% } %>
+
+
+    <p class="eyebrow">
+        WELCOME TO KAVIKA LIBRARY
+    </p>
+
+
+    <h1>
+
+        Your Space.
+        <br>
+
+        Your Focus.
+        <br>
+
+        Your Future.
+
+    </h1>
+
+
+    <p class="hero-description">
+
+        A peaceful and comfortable study
+        space where you can focus on your
+        goals without distractions.
+
+    </p>
+
+
+    <div class="hero-buttons">
+
+        <a
+            href="/bookings/new"
+            class="hero-primary"
+        >
+            Book a Seat →
+        </a>
+
+
+        <a
+            href="/seats"
+            class="hero-secondary"
+        >
+            Check Seats
+        </a>
+
+    </div>
+
+
+</div>
+
+
+<div class="hero-image">
+
+    <img
+        src="<%= heroImage || '/images/kavika.jpeg' %>"
+        alt="KAVIKA Library Study Space"
+    >
+
+
+    <div class="image-badge">
+
+        <span>●</span>
+
+        KAVIKA LIBRARY
+
+    </div>
+
+
+</div>
+
+
+</section>
+
+<!-- ==================================================
+     PRICING
+================================================== -->
+
+<section class="pricing-section">
+
+
+<div class="section-heading">
+
+    <p class="eyebrow">
+        MEMBERSHIP PLANS
+    </p>
+
+    <h2>
+        Choose your study time.
+    </h2>
+
+    <p>
+        Select the plan that works best
+        for your study schedule.
+    </p>
+
+</div>
+
+
+<div class="pricing-grid">
+
+
+    <div class="price-card">
+
+        <div class="price-icon">
+            ☀️
+        </div>
+
+        <p class="price-type">
+            DAY PLAN
+        </p>
+
+        <h3>
+            ₹<%= pricing && pricing.day
+                ? pricing.day
+                : 500
+            %>
+
+            <span>
+                / day
+            </span>
+        </h3>
+
+        <div class="price-time">
+            7:00 AM — 7:00 PM
+        </div>
+
+        <p>
+            Perfect for students who prefer
+            studying during the daytime.
+        </p>
+
+        <a href="/bookings/new">
+            Choose Day →
+        </a>
+
+    </div>
+
+
+
+    <div class="price-card">
+
+        <div class="price-icon">
+            🌙
+        </div>
+
+        <p class="price-type">
+            NIGHT PLAN
+        </p>
+
+        <h3>
+            ₹<%= pricing && pricing.night
+                ? pricing.night
+                : 300
+            %>
+
+            <span>
+                / night
+            </span>
+        </h3>
+
+        <div class="price-time">
+            7:00 PM — 7:00 AM
+        </div>
+
+        <p>
+            A dedicated night study option
+            for late-night learners.
+        </p>
+
+        <a href="/bookings/new">
+            Choose Night →
+        </a>
+
+    </div>
+
+
+
+    <div class="price-card featured-price">
+
+        <div class="popular-label">
+            BEST VALUE
+        </div>
+
+        <div class="price-icon">
+            ⭐
+        </div>
+
+        <p class="price-type">
+            FULL DAY + NIGHT
+        </p>
+
+        <h3>
+            ₹<%= pricing && pricing.full
+                ? pricing.full
+                : 650
+            %>
+
+            <span>
+                / 24 hrs
+            </span>
+        </h3>
+
+        <div class="price-time">
+            7:00 AM — Next Day 7:00 AM
+        </div>
+
+        <p>
+            Full 24-hour access for maximum
+            study time and flexibility.
+        </p>
+
+        <a href="/bookings/new">
+            Choose Full Day →
+        </a>
+
+    </div>
+
+
+</div>
+
+
+</section>
+
+<!-- ==================================================
+     STATS
+================================================== -->
+
+<section class="home-stats">
+
+<div class="home-stat">
+
+    <span>💺</span>
+
+    <div>
+
+        <h2>55</h2>
+
+        <p>
+            Library Seats
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="home-stat">
+
+    <span>📅</span>
+
+    <div>
+
+        <h2>
+            Easy
+        </h2>
+
+        <p>
+            Seat Booking
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="home-stat">
+
+    <span>📚</span>
+
+    <div>
+
+        <h2>
+            Focus
+        </h2>
+
+        <p>
+            Better Learning
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="home-stat">
+
+    <span>🔐</span>
+
+    <div>
+
+        <h2>
+            Secure
+        </h2>
+
+        <p>
+            User Account
+        </p>
+
+    </div>
+
+</div>
+
+
+</section>
+
+<!-- ==================================================
+     WHY KAVIKA
+================================================== -->
+
+<section class="why-kavika">
+
+
+<div class="section-heading">
+
+    <p class="eyebrow">
+        WHY KAVIKA
+    </p>
+
+    <h2>
+        Everything you need
+        to study better.
+    </h2>
+
+    <p>
+        KAVIKA makes library seat
+        management simple, fast
+        and convenient.
+    </p>
+
+</div>
+
+
+<div class="features-grid">
+
+
+    <article class="feature-card">
+
+        <div class="feature-icon">
+            🪑
+        </div>
+
+        <h3>
+            Easy Seat Booking
+        </h3>
+
+        <p>
+            Choose your preferred seat
+            and reserve it in just a
+            few clicks.
+        </p>
+
+    </article>
+
+
+    <article class="feature-card">
+
+        <div class="feature-icon">
+            📅
+        </div>
+
+        <h3>
+            Flexible Dates
+        </h3>
+
+        <p>
+            Select the date you want
+            and check seat availability
+            instantly.
+        </p>
+
+    </article>
+
+
+    <article class="feature-card">
+
+        <div class="feature-icon">
+            📚
+        </div>
+
+        <h3>
+            Study Focused
+        </h3>
+
+        <p>
+            Find a comfortable space
+            where you can concentrate
+            on your studies.
+        </p>
+
+    </article>
+
+
+    <article class="feature-card">
+
+        <div class="feature-icon">
+            🔐
+        </div>
+
+        <h3>
+            Secure Account
+        </h3>
+
+        <p>
+            Keep your bookings organized
+            and manage them from one place.
+        </p>
+
+    </article>
+
+
+</div>
+
+
+</section>
+
+<!-- ==================================================
+     ABOUT
+================================================== -->
+
+<section class="about-kavika">
+
+
+    <img
+        src="<%= aboutImage || '/images/kavika-2.jpeg' %>"
+        alt="KAVIKA Team"
+        class="about-team-image"
+    >
+
+</div>
+
+
+<div class="about-content">
+
+    <p class="eyebrow">
+        ABOUT KAVIKA
+    </p>
+
+    <h2>
+        Built for students
+        who want to stay focused.
+    </h2>
+
+    <p>
+        KAVIKA is designed to provide students
+        with a comfortable and dedicated place
+        to study, learn and achieve their goals.
+    </p>
+
+    <p>
+        Our goal is to make seat booking simple
+        so you can spend less time worrying about
+        space and more time focusing on your studies.
+    </p>
+
+    <a
+        href="/seats"
+        class="hero-primary"
+    >
+        Explore KAVIKA →
+    </a>
+
+</div>
+
+
+</section>
+
+<!-- ==================================================
+     HOW IT WORKS
+================================================== -->
+
+<section class="how-it-works">
+
+
+<div class="section-heading">
+
+    <p class="eyebrow">
+        SIMPLE PROCESS
+    </p>
+
+    <h2>
+        How KAVIKA Works
+    </h2>
+
+</div>
+
+
+<div class="steps-grid">
+
+
+    <div class="step-card">
+
+        <span class="step-number">
+            01
+        </span>
+
+        <h3>
+            Choose a Seat
+        </h3>
+
+        <p>
+            Browse all available
+            library seats.
+        </p>
+
+    </div>
+
+
+    <div class="step-card">
+
+        <span class="step-number">
+            02
+        </span>
+
+        <h3>
+            Select Date
+        </h3>
+
+        <p>
+            Select the date for
+            your study session.
+        </p>
+
+    </div>
+
+
+    <div class="step-card">
+
+        <span class="step-number">
+            03
+        </span>
+
+        <h3>
+            Confirm Booking
+        </h3>
+
+        <p>
+            Confirm your booking
+            and you're ready.
+        </p>
+
+    </div>
+
+
+</div>
+
+
+</section>
+
+<!-- ==================================================
+     CTA
+================================================== -->
+
+<section class="home-cta">
+
+
+<p class="eyebrow">
+    READY TO START?
+</p>
+
+
+<h2>
+    Your perfect study
+    space is waiting.
+</h2>
+
+
+<p>
+    Find an available seat
+    and start your productive session.
+</p>
+
+
+<a
+    href="/seats"
+    class="cta-button"
+>
+    Find a Seat →
+</a>
+
+
+</section>
+
+</main>
+
+<!-- ==================================================
+     SOCIAL
+================================================== -->
+
+<section class="social-section">
+
+
+<div class="social-container">
+
+
+    <p class="eyebrow">
+        CONNECT WITH KAVIKA
+    </p>
+
+
+    <h2>
+        Stay Connected With Us
+    </h2>
+
+
+    <p class="social-text">
+        Follow KAVIKA for updates, announcements,
+        study-related information and more.
+    </p>
+
+
+    <div class="social-links">
+
+
+        <a
+            href="https://www.instagram.com/kavika_library?igsi=MXVxbzE0ODR0eHFjcg=="
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link"
+        >
+
+            <i class="fa-brands fa-instagram"></i>
+
+            <span>
+                Instagram
+            </span>
+
+        </a>
+
+
+        <a
+            href="https://www.facebook.com/profile.php?id=61590649374327&sk=reels_tab"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link"
+        >
+
+            <i class="fa-brands fa-facebook-f"></i>
+
+            <span>
+                Facebook
+            </span>
+
+        </a>
+
+
+        <a
+            href="https://www.youtube.com/@Kavikalibrary"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link"
+        >
+
+            <i class="fa-brands fa-youtube"></i>
+
+            <span>
+                YouTube
+            </span>
+
+        </a>
+
+
+    </div>
+
+
+</div>
+
+
+</section>
+
+<!-- ==================================================
+     FOOTER
+================================================== -->
+
+<%- include("./includes/footer.ejs") %>
+
+<!-- ==================================================
+     REMOVE INTRO
+================================================== -->
+
+<script>
+
+    window.addEventListener("load", function () {
+
+        setTimeout(function () {
+
+            const intro =
+                document.getElementById(
+                    "kavika-intro"
+                );
+
+            if (intro) {
+
+                intro.remove();
+
+            }
+
+        }, 7200);
+
+    });
+
+</script>
+
+</body>
+
+</html>

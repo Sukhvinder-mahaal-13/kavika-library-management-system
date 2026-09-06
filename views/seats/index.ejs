@@ -1,0 +1,458 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Kavika - Seats</title>
+
+<link rel="icon" href="images/kavika.jpeg">
+    <!-- Variables -->
+
+    <link
+        rel="stylesheet"
+        href="/css/variables.css"
+    >
+
+
+    <!-- Main CSS -->
+
+    <link
+        rel="stylesheet"
+        href="/css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- ========================================
+         NAVBAR
+    ======================================== -->
+
+    <%- include("../includes/navbar.ejs") %>
+
+
+    <!-- ========================================
+         MAIN
+    ======================================== -->
+
+    <main class="seats-page">
+
+
+        <!-- ========================================
+             HEADER
+        ======================================== -->
+
+        <section class="page-header">
+
+            <div>
+
+                <p class="eyebrow">
+                    KAVIKA LIBRARY
+                </p>
+
+                <h1>
+                    Find Your Perfect Seat
+                </h1>
+
+                <p class="page-description">
+                    Check seat availability and book
+                    your preferred seat for your study session.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================
+             DATE SEARCH
+        ======================================== -->
+
+        <section class="availability-box">
+
+            <div class="availability-heading">
+
+                <h2>
+                    Check Availability
+                </h2>
+
+                <p>
+                    Select a date to see available seats.
+                </p>
+
+            </div>
+
+
+            <form
+                action="/seats"
+                method="GET"
+                class="date-form"
+            >
+
+                <div class="form-group">
+
+                    <label for="date">
+                        Select Date
+                    </label>
+
+
+                    <input
+                        type="date"
+                        id="date"
+                        name="date"
+                        value="<%= selectedDate %>"
+                        min="<%= new Date().toISOString().split('T')[0] %>"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="primary-btn"
+                >
+
+                    Check Availability
+
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- ========================================
+             STATISTICS
+        ======================================== -->
+
+        <section class="seat-stats">
+
+
+            <!-- TOTAL -->
+
+            <div class="stat-card">
+
+                <span class="stat-icon">
+                    💺
+                </span>
+
+
+                <div>
+
+                    <p>
+                        Total Seats
+                    </p>
+
+
+                    <h2>
+                        <%= totalSeats %>
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <!-- AVAILABLE -->
+
+            <div class="stat-card available-stat">
+
+                <span class="stat-icon">
+                    🟢
+                </span>
+
+
+                <div>
+
+                    <p>
+                        Available
+                    </p>
+
+
+                    <h2>
+                        <%= availableSeats %>
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <!-- BOOKED -->
+
+            <div class="stat-card booked-stat">
+
+                <span class="stat-icon">
+                    🔴
+                </span>
+
+
+                <div>
+
+                    <p>
+                        Booked
+                    </p>
+
+
+                    <h2>
+                        <%= bookedSeats %>
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ========================================
+             SELECTED DATE
+        ======================================== -->
+
+        <div class="selected-date">
+
+            Showing availability for:
+
+            <strong>
+                <%= new Date(
+                    selectedDate + "T00:00:00"
+                ).toLocaleDateString() %>
+            </strong>
+
+        </div>
+
+
+    <!-- ========================================
+     SEAT MAP
+======================================== -->
+
+<section class="seats-section">
+
+
+    <div class="section-title">
+
+        <div>
+
+            <p class="eyebrow">
+                SEAT MAP
+            </p>
+
+
+            <h2>
+                Choose Your Seat
+            </h2>
+
+        </div>
+
+    </div>
+
+
+    <div class="seats-grid">
+
+
+        <% if (seats && seats.length > 0) { %>
+
+
+            <!-- ========================================
+                 SORT SEATS
+            ======================================== -->
+
+            <%
+                const sortedSeats = [...seats].sort(
+                    (a, b) => a.seatNumber - b.seatNumber
+                );
+            %>
+
+
+            <!-- ========================================
+                 CREATE ROWS OF 5
+            ======================================== -->
+
+            <%
+                for (
+                    let i = 0;
+                    i < sortedSeats.length;
+                    i += 5
+                ) {
+
+                    let row =
+                        sortedSeats.slice(i, i + 5);
+
+
+                    /*
+                     * Row 1  = 1 2 3 4 5
+                     * Row 2  = 10 9 8 7 6
+                     * Row 3  = 11 12 13 14 15
+                     * Row 4  = 20 19 18 17 16
+                     */
+
+                    if ((i / 5) % 2 === 1) {
+
+                        row.reverse();
+
+                    }
+
+            %>
+
+
+                <!-- ========================================
+                     SEAT ROW
+                ======================================== -->
+
+                <% row.forEach(seat => { %>
+
+
+                    <article
+                        class="seat-card <%= seat.booked ? 'booked' : 'available' %>"
+                    >
+
+
+                        <!-- ========================================
+                             SEAT NUMBER
+                        ======================================== -->
+
+                        <div class="seat-top">
+
+                            <span class="seat-label">
+
+                                SEAT
+
+                            </span>
+
+
+                            <span class="seat-number">
+
+                                <%= seat.seatNumber %>
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- ========================================
+                             BOOKED
+                        ======================================== -->
+
+                        <% if (seat.booked) { %>
+
+
+                            <div
+                                class="seat-status booked-status"
+                            >
+
+                                <span>
+                                    🔴
+                                </span>
+
+                                Booked
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="secondary-btn"
+                                disabled
+                            >
+
+                                Already Booked
+
+                            </button>
+
+
+                        <% } else { %>
+
+
+                            <!-- ========================================
+                                 AVAILABLE
+                            ======================================== -->
+
+                            <div
+                                class="seat-status available-status"
+                            >
+
+                                <span>
+                                    🟢
+                                </span>
+
+                                Available
+
+                            </div>
+
+
+                            <a
+                                href="/bookings/<%= seat._id %>"
+                                class="book-link"
+                            >
+
+                                <button
+                                    type="button"
+                                    class="book-btn"
+                                >
+
+                                    Book This Seat
+
+                                </button>
+
+                            </a>
+
+
+                        <% } %>
+
+
+                    </article>
+
+
+                <% }) %>
+
+
+            <% } %>
+
+
+        <% } else { %>
+
+
+            <div class="admin-empty">
+
+                No seats available.
+
+            </div>
+
+
+        <% } %>
+
+
+    </div>
+
+
+</section>
+  
+
+
+    </main>
+
+
+    <!-- ========================================
+         FOOTER
+    ======================================== -->
+
+    <%- include("../includes/footer.ejs") %>
+
+
+</body>
+
+</html>
+

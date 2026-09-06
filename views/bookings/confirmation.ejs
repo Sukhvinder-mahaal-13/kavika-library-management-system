@@ -1,0 +1,1074 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Kavika - Booking Payment</title>
+
+    <link
+        rel="icon"
+        type="image/jpeg"
+        href="/images/kavika.jpeg"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- ========================================
+     NAVBAR
+========================================= -->
+
+<%- include("../includes/navbar.ejs") %>
+
+
+<!-- ========================================
+     PAYMENT / CONFIRMATION PAGE
+========================================= -->
+
+<main class="confirmation-page">
+
+    <div class="confirmation-container">
+
+
+        <!-- ========================================
+             ICON
+        ========================================= -->
+
+        <div class="confirmation-icon">
+
+            <% if (booking.paymentStatus === "paid") { %>
+
+                ✓
+
+            <% } else if (booking.status === "cancelled") { %>
+
+                ✕
+
+            <% } else { %>
+
+                ₹
+
+            <% } %>
+
+        </div>
+
+
+        <!-- ========================================
+             TITLE
+        ========================================= -->
+
+        <p class="eyebrow">
+            KAVIKA LIBRARY
+        </p>
+
+
+        <% if (booking.paymentStatus === "paid") { %>
+
+            <h1>
+                Booking Confirmed!
+            </h1>
+
+            <p class="confirmation-message">
+                Your payment was successful and your seat
+                has been successfully booked.
+            </p>
+
+
+        <% } else if (booking.status === "cancelled") { %>
+
+            <h1>
+                Booking Cancelled
+            </h1>
+
+            <p class="confirmation-message">
+                This booking has been cancelled and cannot be paid.
+            </p>
+
+
+        <% } else { %>
+
+            <h1>
+                Complete Your Payment
+            </h1>
+
+            <p class="confirmation-message">
+                Your seat is reserved temporarily.
+                Please complete the payment to confirm your booking.
+            </p>
+
+        <% } %>
+
+
+        <!-- ========================================
+             BOOKING CARD
+        ========================================= -->
+
+        <div class="booking-confirmation-card">
+
+
+            <!-- BOOKING NUMBER -->
+
+            <div class="confirmation-row">
+
+                <span>
+                    Booking Number
+                </span>
+
+                <strong>
+                    <%= booking.bookingNumber %>
+                </strong>
+
+            </div>
+
+
+            <!-- SEAT -->
+
+            <div class="confirmation-row">
+
+                <span>
+                    Seat Number
+                </span>
+
+                <strong>
+
+                    <% if (booking.seat) { %>
+
+                        Seat <%= booking.seat.seatNumber %>
+
+                    <% } else { %>
+
+                        Seat Not Available
+
+                    <% } %>
+
+                </strong>
+
+            </div>
+
+
+            <!-- BOOKING TYPE -->
+
+            <div class="confirmation-row">
+
+                <span>
+                    Booking Type
+                </span>
+
+                <strong>
+
+                    <% if (booking.bookingType === "day") { %>
+
+                        Day
+
+                    <% } else if (booking.bookingType === "night") { %>
+
+                        Night
+
+                    <% } else if (booking.bookingType === "fullDay") { %>
+
+                        Day + Night
+
+                    <% } else { %>
+
+                        <%= booking.bookingType %>
+
+                    <% } %>
+
+                </strong>
+
+            </div>
+
+
+            <!-- START DATE -->
+
+            <div class="confirmation-row">
+
+                <span>
+                    Start Date
+                </span>
+
+                <strong>
+                    <%= new Date(booking.startDate).toLocaleDateString("en-IN") %>
+                </strong>
+
+            </div>
+
+
+            <!-- END DATE -->
+
+            <div class="confirmation-row">
+
+                <span>
+                    End Date
+                </span>
+
+                <strong>
+                    <%= new Date(booking.endDate).toLocaleDateString("en-IN") %>
+                </strong>
+
+            </div>
+
+
+            <!-- DURATION -->
+
+            <div class="confirmation-row">
+
+                <span>
+                    Duration
+                </span>
+
+                <strong>
+                    <%= booking.durationDays %> Day(s)
+                </strong>
+
+            </div>
+
+
+            <!-- PRICE PER MONTH -->
+
+            <div class="confirmation-row">
+
+                <span>
+                    Price / Month
+                </span>
+
+                <strong>
+                    ₹<%= Number(booking.pricePerMonth).toLocaleString("en-IN") %>
+                </strong>
+
+            </div>
+
+
+            <!-- TOTAL AMOUNT -->
+
+            <div class="confirmation-row total-row">
+
+                <span>
+                    Total Amount
+                </span>
+
+                <strong>
+                    ₹<%= Number(booking.totalAmount).toLocaleString("en-IN") %>
+                </strong>
+
+            </div>
+
+
+            <!-- PAYMENT STATUS -->
+
+            <div class="confirmation-row">
+
+                <span>
+                    Payment Status
+                </span>
+
+
+                <% if (booking.paymentStatus === "paid") { %>
+
+                    <strong class="confirmed-status">
+                        🟢 Paid
+                    </strong>
+
+
+                <% } else if (booking.paymentStatus === "failed") { %>
+
+                    <strong style="color: red;">
+                        🔴 Failed
+                    </strong>
+
+
+                <% } else { %>
+
+                    <strong style="color: orange;">
+                        🟠 Payment Pending
+                    </strong>
+
+                <% } %>
+
+            </div>
+
+
+            <!-- BOOKING STATUS -->
+
+            <div class="confirmation-row">
+
+                <span>
+                    Booking Status
+                </span>
+
+
+                <% if (booking.status === "confirmed") { %>
+
+                    <strong class="confirmed-status">
+                        🟢 Confirmed
+                    </strong>
+
+
+                <% } else if (booking.status === "cancelled") { %>
+
+                    <strong style="color: red;">
+                        🔴 Cancelled
+                    </strong>
+
+
+                <% } else { %>
+
+                    <strong style="color: orange;">
+                        🟠 Pending
+                    </strong>
+
+                <% } %>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ========================================
+             PAYMENT SECTION
+        ========================================= -->
+
+        <% if (
+            booking.paymentStatus !== "paid" &&
+            booking.status !== "cancelled"
+        ) { %>
+
+
+            <div class="confirmation-note">
+
+                <span>
+                    💳
+                </span>
+
+                <p>
+                    Your booking will be confirmed only after
+                    successful payment.
+                </p>
+
+            </div>
+
+
+            <!-- PAY NOW BUTTON -->
+
+            <div class="confirmation-actions">
+
+                <button
+                    type="button"
+                    id="payNowBtn"
+                    class="confirm-btn primary-confirm-btn"
+                >
+
+                    Pay ₹<%= Number(booking.totalAmount).toLocaleString("en-IN") %> Now
+
+                </button>
+
+            </div>
+
+
+        <% } %>
+
+
+        <!-- ========================================
+             SUCCESS MESSAGE
+        ========================================= -->
+
+        <% if (booking.paymentStatus === "paid") { %>
+
+            <div class="confirmation-note">
+
+                <span>
+                    📚
+                </span>
+
+                <p>
+                    Your payment has been received successfully.
+                    Your seat is now confirmed for the selected dates.
+                </p>
+
+            </div>
+
+        <% } %>
+
+
+        <!-- ========================================
+             CANCELLED MESSAGE
+        ========================================= -->
+
+        <% if (booking.status === "cancelled") { %>
+
+            <div class="confirmation-note">
+
+                <span>
+                    ⚠️
+                </span>
+
+                <p>
+                    This booking is cancelled and cannot be paid.
+                </p>
+
+            </div>
+
+        <% } %>
+
+
+        <!-- ========================================
+             NAVIGATION BUTTONS
+        ========================================= -->
+
+        <div class="confirmation-actions">
+
+
+            <a
+                href="/bookings/my"
+                class="confirm-btn secondary-confirm-btn"
+            >
+                My Bookings
+            </a>
+
+
+            <a
+                href="/seats"
+                class="confirm-btn secondary-confirm-btn"
+            >
+                View Seats
+            </a>
+
+
+            <a
+                href="/"
+                class="confirm-btn home-confirm-btn"
+            >
+                Home
+            </a>
+
+
+        </div>
+
+
+    </div>
+
+</main>
+
+
+<!-- ========================================
+     FOOTER
+========================================= -->
+
+<%- include("../includes/footer.ejs") %>
+
+
+<% if (
+    booking.paymentStatus !== "paid" &&
+    booking.status !== "cancelled"
+) { %>
+
+
+<!-- ========================================
+     RAZORPAY CHECKOUT
+========================================= -->
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+<script>
+
+    // ==================================================
+    // ELEMENT
+    // ==================================================
+
+    const payNowBtn =
+        document.getElementById("payNowBtn");
+
+
+    // ==================================================
+    // BOOKING DATA
+    // ==================================================
+
+    const bookingId =
+        <%- JSON.stringify(String(booking._id)) %>;
+
+
+    const razorpayOrderId =
+        <%- JSON.stringify(booking.razorpayOrderId || "") %>;
+
+
+    const razorpayKeyId =
+        <%- JSON.stringify(razorpayKeyId || "") %>;
+
+
+    const totalAmount =
+        Number(
+            <%- JSON.stringify(Number(booking.totalAmount)) %>
+        );
+
+
+    const customerName =
+        <%- JSON.stringify(
+            booking.user
+                ? booking.user.name || ""
+                : ""
+        ) %>;
+
+
+    const customerEmail =
+        <%- JSON.stringify(
+            booking.user
+                ? booking.user.email || ""
+                : ""
+        ) %>;
+
+
+    // ==================================================
+    // ORIGINAL BUTTON TEXT
+    // ==================================================
+
+    const originalButtonText =
+        `Pay ₹${totalAmount.toLocaleString("en-IN")} Now`;
+
+
+    // ==================================================
+    // PAYMENT IN PROGRESS
+    // ==================================================
+
+    let paymentInProgress = false;
+
+
+    // ==================================================
+    // BASIC VALIDATION
+    // ==================================================
+
+    function validatePaymentData() {
+
+        if (
+            !bookingId
+        ) {
+
+            throw new Error(
+                "Booking ID is missing."
+            );
+
+        }
+
+
+        if (
+            !razorpayKeyId
+        ) {
+
+            throw new Error(
+                "Razorpay Key ID is missing."
+            );
+
+        }
+
+
+        if (
+            !razorpayOrderId
+        ) {
+
+            throw new Error(
+                "Razorpay order was not created."
+            );
+
+        }
+
+
+        if (
+            !Number.isFinite(totalAmount) ||
+            totalAmount <= 0
+        ) {
+
+            throw new Error(
+                "Invalid payment amount."
+            );
+
+        }
+
+    }
+
+
+    // ==================================================
+    // RESET BUTTON
+    // ==================================================
+
+    function resetPayButton() {
+
+        if (!payNowBtn) {
+            return;
+        }
+
+
+        paymentInProgress =
+            false;
+
+
+        payNowBtn.disabled =
+            false;
+
+
+        payNowBtn.innerText =
+            originalButtonText;
+
+    }
+
+
+    // ==================================================
+    // PAY NOW
+    // ==================================================
+
+    if (payNowBtn) {
+
+        payNowBtn.addEventListener(
+            "click",
+            async function () {
+
+                // Prevent double click.
+
+                if (
+                    paymentInProgress
+                ) {
+
+                    return;
+
+                }
+
+
+                try {
+
+                    // ==========================================
+                    // VALIDATE
+                    // ==========================================
+
+                    validatePaymentData();
+
+
+                    // ==========================================
+                    // CHECK RAZORPAY
+                    // ==========================================
+
+                    if (
+                        typeof Razorpay ===
+                        "undefined"
+                    ) {
+
+                        throw new Error(
+                            "Razorpay Checkout could not be loaded. Please check your internet connection and try again."
+                        );
+
+                    }
+
+
+                    // ==========================================
+                    // START PAYMENT
+                    // ==========================================
+
+                    paymentInProgress =
+                        true;
+
+
+                    payNowBtn.disabled =
+                        true;
+
+
+                    payNowBtn.innerText =
+                        "Opening Payment...";
+
+
+                    // ==========================================
+                    // RAZORPAY OPTIONS
+                    // ==========================================
+
+                    const options = {
+
+                        key:
+                            razorpayKeyId,
+
+                        amount:
+                            Math.round(
+                                totalAmount * 100
+                            ),
+
+                        currency:
+                            "INR",
+
+                        name:
+                            "Kavika Library",
+
+                        description:
+                            "Kavika Library Seat Booking",
+
+                        order_id:
+                            razorpayOrderId,
+
+                        prefill: {
+
+                            name:
+                                customerName,
+
+                            email:
+                                customerEmail
+
+                        },
+
+                        theme: {
+
+                            color:
+                                "#111111"
+
+                        },
+
+
+                        // ======================================
+                        // SUCCESS
+                        // ======================================
+
+                        handler:
+                            async function (
+                                paymentResponse
+                            ) {
+
+                                try {
+
+                                    console.log(
+                                        "Razorpay payment response received."
+                                    );
+
+
+                                    // ==================================
+                                    // CHECK RESPONSE
+                                    // ==================================
+
+                                    if (
+                                        !paymentResponse ||
+                                        !paymentResponse.razorpay_payment_id ||
+                                        !paymentResponse.razorpay_order_id ||
+                                        !paymentResponse.razorpay_signature
+                                    ) {
+
+                                        throw new Error(
+                                            "Razorpay returned incomplete payment information."
+                                        );
+
+                                    }
+
+
+                                    // ==================================
+                                    // UPDATE BUTTON
+                                    // ==================================
+
+                                    payNowBtn.innerText =
+                                        "Verifying Payment...";
+
+
+                                    // ==================================
+                                    // VERIFY WITH SERVER
+                                    // ==================================
+
+                                    const verifyResponse =
+                                        await fetch(
+                                            "/bookings/payment/verify",
+                                            {
+
+                                                method:
+                                                    "POST",
+
+                                                headers: {
+
+                                                    "Content-Type":
+                                                        "application/json"
+
+                                                },
+
+                                                credentials:
+                                                    "same-origin",
+
+                                                body:
+                                                    JSON.stringify({
+
+                                                        bookingId:
+                                                            bookingId,
+
+                                                        razorpayPaymentId:
+                                                            paymentResponse.razorpay_payment_id,
+
+                                                        razorpayOrderId:
+                                                            paymentResponse.razorpay_order_id,
+
+                                                        razorpaySignature:
+                                                            paymentResponse.razorpay_signature
+
+                                                    })
+
+                                            }
+                                        );
+
+
+                                    // ==================================
+                                    // RESPONSE TEXT
+                                    // ==================================
+
+                                    const responseText =
+                                        await verifyResponse.text();
+
+
+                                    console.log(
+                                        "Payment verification status:",
+                                        verifyResponse.status
+                                    );
+
+
+                                    // ==================================
+                                    // PARSE JSON
+                                    // ==================================
+
+                                    let verifyData;
+
+
+                                    try {
+
+                                        verifyData =
+                                            JSON.parse(
+                                                responseText
+                                            );
+
+                                    } catch (
+                                        jsonError
+                                    ) {
+
+                                        console.error(
+                                            "Invalid server response:",
+                                            responseText
+                                        );
+
+
+                                        throw new Error(
+                                            "Server returned an invalid response. Please check the server."
+                                        );
+
+                                    }
+
+
+                                    // ==================================
+                                    // SERVER ERROR
+                                    // ==================================
+
+                                    if (
+                                        !verifyResponse.ok
+                                    ) {
+
+                                        const error =
+                                            new Error(
+
+                                                verifyData.message ||
+                                                "Payment verification failed."
+
+                                            );
+
+
+                                        // Store whether payment was
+                                        // actually received by server.
+
+                                        error.paymentReceived =
+                                            verifyData.paymentReceived ===
+                                            true;
+
+
+                                        throw error;
+
+                                    }
+
+
+                                    // ==================================
+                                    // SUCCESS CHECK
+                                    // ==================================
+
+                                    if (
+                                        !verifyData.success
+                                    ) {
+
+                                        throw new Error(
+
+                                            verifyData.message ||
+                                            "Payment verification failed."
+
+                                        );
+
+                                    }
+
+
+                                    // ==================================
+                                    // SUCCESS
+                                    // ==================================
+
+                                    payNowBtn.innerText =
+                                        "Payment Successful ✓";
+
+
+                                    // ==================================
+                                    // REDIRECT
+                                    // ==================================
+
+                                    window.location.href =
+                                        verifyData.redirect ||
+                                        `/bookings/confirmation/${bookingId}`;
+
+                                } catch (
+                                    error
+                                ) {
+
+                                    console.error(
+                                        "Payment verification error:",
+                                        error
+                                    );
+
+
+                                    if (
+                                        error.paymentReceived
+                                    ) {
+
+                                        alert(
+                                            error.message ||
+                                            "Payment was received, but the booking needs attention. Please contact the library."
+                                        );
+
+                                    } else {
+
+                                        alert(
+                                            error.message ||
+                                            "Payment verification failed. If money was deducted, please contact the library."
+                                        );
+
+                                    }
+
+
+                                    resetPayButton();
+
+                                }
+
+                            }
+
+                    };
+
+
+                    // ==========================================
+                    // CREATE RAZORPAY INSTANCE
+                    // ==========================================
+
+                    const razorpay =
+                        new Razorpay(
+                            options
+                        );
+
+
+                    // ==========================================
+                    // PAYMENT FAILED
+                    // ==========================================
+
+                    razorpay.on(
+                        "payment.failed",
+                        function (
+                            response
+                        ) {
+
+                            console.error(
+                                "Razorpay payment failed:",
+                                response?.error
+                            );
+
+
+                            const errorDescription =
+                                response &&
+                                response.error &&
+                                response.error.description
+                                    ? response.error.description
+                                    : "Payment failed. Please try again.";
+
+
+                            alert(
+                                errorDescription
+                            );
+
+
+                            resetPayButton();
+
+                        }
+                    );
+
+
+                    // ==========================================
+                    // CHECKOUT CLOSED
+                    // ==========================================
+
+                    razorpay.on(
+                        "modal.closed",
+                        function () {
+
+                            console.log(
+                                "Razorpay checkout closed."
+                            );
+
+
+                            resetPayButton();
+
+                        }
+                    );
+
+
+                    // ==========================================
+                    // OPEN CHECKOUT
+                    // ==========================================
+
+                    razorpay.open();
+
+
+                } catch (
+                    error
+                ) {
+
+                    console.error(
+                        "Payment start error:",
+                        error
+                    );
+
+
+                    alert(
+                        error.message ||
+                        "Unable to start payment."
+                    );
+
+
+                    resetPayButton();
+
+                }
+
+            }
+        );
+
+    }
+
+</script>
+
+<% } %>
+
+
+</body>
+
+</html>
+

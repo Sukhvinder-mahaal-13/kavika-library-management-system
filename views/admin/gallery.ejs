@@ -1,0 +1,352 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>KAVIKA | Gallery Management</title>
+
+    <!-- ========================================
+         FAVICON
+         ======================================== -->
+
+    <link
+        rel="icon"
+        type="image/jpeg"
+        href="/images/kavika.jpeg"
+    >
+
+    <!-- ========================================
+         MAIN CSS
+         ======================================== -->
+
+    <link
+        rel="stylesheet"
+        href="/css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- ========================================
+         NAVBAR
+         ======================================== -->
+
+    <%- include("../includes/navbar.ejs") %>
+
+
+    <!-- ========================================
+         MAIN
+         ======================================== -->
+
+    <main class="admin-gallery-page">
+
+
+        <!-- ========================================
+             HEADER
+             ======================================== -->
+
+        <section class="gallery-admin-header">
+
+            <p class="eyebrow">
+                KAVIKA ADMIN
+            </p>
+
+            <h1>
+                Gallery Management
+            </h1>
+
+            <p>
+                Upload, view and delete gallery photos.
+            </p>
+
+        </section>
+
+
+        <!-- ========================================
+             UPLOAD FORM
+             ======================================== -->
+
+        <section class="gallery-upload-box">
+
+
+            <div class="gallery-upload-heading">
+
+                <div
+                    class="gallery-upload-icon"
+                    aria-hidden="true"
+                >
+                    +
+                </div>
+
+                <div>
+
+                    <h2>
+                        Add New Photo
+                    </h2>
+
+                    <p>
+                        Select an image and give it a title.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form
+                action="/gallery/admin/upload"
+                method="POST"
+                enctype="multipart/form-data"
+                class="gallery-upload-form"
+            >
+
+
+                <!-- ========================================
+                     PHOTO TITLE
+                     ======================================== -->
+
+                <div class="gallery-input-group">
+
+                    <label for="title">
+                        Photo Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        placeholder="Enter photo title"
+                        maxlength="150"
+                        autocomplete="off"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- ========================================
+                     IMAGE
+                     ======================================== -->
+
+                <div class="gallery-input-group">
+
+                    <label for="image">
+                        Choose Image
+                    </label>
+
+                    <input
+                        type="file"
+                        id="image"
+                        name="image"
+                        accept=".jpg,.jpeg,.png,.webp,.gif,image/jpeg,image/png,image/webp,image/gif"
+                        required
+                    >
+
+                    <small>
+                        JPG, JPEG, PNG, WEBP or GIF — maximum 5 MB.
+                    </small>
+
+                </div>
+
+
+                <!-- ========================================
+                     SUBMIT
+                     ======================================== -->
+
+                <button
+                    type="submit"
+                    class="gallery-post-btn"
+                >
+                    Post Photo
+                </button>
+
+
+            </form>
+
+
+        </section>
+
+
+        <!-- ========================================
+             POSTED PHOTOS
+             ======================================== -->
+
+        <section class="gallery-posted-section">
+
+
+            <!-- ========================================
+                 SECTION HEADING
+                 ======================================== -->
+
+            <div class="gallery-posted-heading">
+
+
+                <div>
+
+                    <p class="eyebrow">
+                        GALLERY
+                    </p>
+
+                    <h2>
+                        Posted Photos
+                    </h2>
+
+                </div>
+
+
+                <span class="gallery-count">
+
+                    <%= images ? images.length : 0 %> Photos
+
+                </span>
+
+
+            </div>
+
+
+            <!-- ========================================
+                 CHECK IMAGES
+                 ======================================== -->
+
+            <% if (images && images.length > 0) { %>
+
+
+                <div class="admin-gallery-grid">
+
+
+                    <% images.forEach(function(image) { %>
+
+
+                        <article
+                            class="admin-gallery-card"
+                        >
+
+
+                            <!-- ========================================
+                                 IMAGE
+                                 ======================================== -->
+
+                            <div
+                                class="admin-gallery-image"
+                            >
+
+                                <img
+                                    src="<%= image.image %>"
+                                    alt="<%= image.title %>"
+                                    loading="lazy"
+                                    decoding="async"
+                                >
+
+                            </div>
+
+
+                            <!-- ========================================
+                                 CONTENT
+                                 ======================================== -->
+
+                            <div
+                                class="admin-gallery-content"
+                            >
+
+
+                                <h3>
+                                    <%= image.title %>
+                                </h3>
+
+
+                                <!-- ========================================
+                                     DELETE
+                                     ======================================== -->
+
+                                <form
+                                    action="/gallery/admin/<%= image._id %>?_method=DELETE"
+                                    method="POST"
+                                    class="delete-image-form"
+                                    onsubmit="return confirm('Are you sure you want to delete this image?');"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="gallery-delete-btn"
+                                        aria-label="Delete <%= image.title %>"
+                                    >
+                                        🗑 Delete Image
+                                    </button>
+
+                                </form>
+
+
+                            </div>
+
+
+                        </article>
+
+
+                    <% }); %>
+
+
+                </div>
+
+
+            <% } else { %>
+
+
+                <!-- ========================================
+                     NO PHOTOS
+                     ======================================== -->
+
+                <div
+                    class="gallery-no-images"
+                    aria-label="No gallery photos"
+                >
+
+                    <div
+                        class="no-images-icon"
+                        aria-hidden="true"
+                    >
+                        🖼️
+                    </div>
+
+                    <h3>
+                        No Photos Yet
+                    </h3>
+
+                    <p>
+                        Upload your first gallery photo above.
+                    </p>
+
+                </div>
+
+
+            <% } %>
+
+
+        </section>
+
+
+    </main>
+
+
+    <!-- ========================================
+         FOOTER
+         ======================================== -->
+
+    <%- include("../includes/footer.ejs") %>
+
+
+</body>
+
+</html>
+

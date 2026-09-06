@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Kavika - Book Seat</title>
+
+    <link
+        rel="icon"
+        href="/images/kavika.jpeg"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/style.css"
+    >
+
+    <style>
+
+        /* ========================================
+           BOOKING TYPE
+        ======================================== */
+
+        .booking-type-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+
+        .booking-type-option {
+            position: relative;
+        }
+
+
+        .booking-type-option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+
+        .booking-type-label {
+            display: block;
+            padding: 16px 12px;
+            border: 1px solid #444;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: 0.2s ease;
+        }
+
+
+        .booking-type-label:hover {
+            border-color: #888;
+        }
+
+
+        .booking-type-option input:checked + .booking-type-label {
+            border-color: #fff;
+            background: #222;
+        }
+
+
+        /* ========================================
+           PRICE BOX
+        ======================================== */
+
+        .price-box {
+            margin-top: 22px;
+            padding: 18px;
+            border-radius: 12px;
+            background: #151515;
+            border: 1px solid #333;
+        }
+
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+
+
+        .price-row:last-child {
+            margin-bottom: 0;
+        }
+
+
+        .total-price {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #333;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+
+        .price-note {
+            margin-top: 10px;
+            font-size: 13px;
+            opacity: 0.7;
+            line-height: 1.5;
+        }
+
+
+        /* ========================================
+           PAYMENT MESSAGE
+        ======================================== */
+
+        .payment-message {
+            display: none;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #211;
+            border: 1px solid #633;
+            color: #fff;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+
+        /* ========================================
+           BOOKING BUTTON
+        ======================================== */
+
+        .booking-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+
+        /* ========================================
+           MOBILE
+        ======================================== */
+
+        @media (max-width: 650px) {
+
+            .booking-type-group {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ========================================
+     NAVBAR
+========================================= -->
+
+<%- include("../includes/navbar.ejs") %>
+
+
+<!-- ========================================
+     BOOKING PAGE
+========================================= -->
+
+<main class="booking-page">
+
+    <div class="booking-container">
+
+        <div class="booking-card">
+
+
+            <!-- ========================================
+                 EYEBROW
+            ========================================= -->
+
+            <p class="eyebrow">
+                KAVIKA LIBRARY
+            </p>
+
+
+            <!-- ========================================
+                 HEADING
+            ========================================= -->
+
+            <h1>
+                Book Your Seat
+            </h1>
+
+
+            <p class="booking-subtitle">
+                Select your seat, booking type and study dates.
+            </p>
+
+
+            <!-- ========================================
+                 BOOKING FORM
+            ========================================= -->
+
+            <form
+                action="/bookings"
+                method="POST"
+                id="bookingForm"
+            >
+
+
+                <!-- ========================================
+                     SEAT
+                ========================================= -->
+
+                <% if (seat) { %>
+
+                    <!-- SELECTED SEAT -->
+
+                    <div class="selected-seat">
+
+                        <span>
+                            SELECTED SEAT
+                        </span>
+
+                        <strong>
+                            Seat <%= seat.seatNumber %>
+                        </strong>
+
+                    </div>
+
+
+                    <!-- HIDDEN SEAT ID -->
+
+                    <input
+                        type="hidden"
+                        name="seat"
+                        value="<%= seat._id %>"
+                    >
+
+                <% } else { %>
+
+
+                    <!-- SELECT SEAT -->
+
+                    <div class="form-group">
+
+                        <label for="seat">
+                            Select Seat
+                        </label>
+
+
+                        <select
+                            name="seat"
+                            id="seat"
+                            required
+                        >
+
+                            <option value="">
+                                -- Select a Seat --
+                            </option>
+
+
+                            <% if (seats && seats.length > 0) { %>
+
+                                <% seats.forEach(function(item) { %>
+
+                                    <option
+                                        value="<%= item._id %>"
+                                    >
+                                        Seat <%= item.seatNumber %>
+                                    </option>
+
+                                <% }) %>
+
+                            <% } else { %>
+
+                                <option value="" disabled>
+                                    No seats available
+                                </option>
+
+                            <% } %>
+
+                        </select>
+
+                    </div>
+
+                <% } %>
+
+
+                <!-- ========================================
+                     BOOKING TYPE
+                ========================================= -->
+
+                <div class="form-group">
+
+                    <label>
+                        Booking Type
+                    </label>
+
+
+                    <div class="booking-type-group">
+
+
+                        <!-- ========================================
+                             DAY
+                        ========================================= -->
+
+                        <div class="booking-type-option">
+
+                            <input
+                                type="radio"
+                                name="bookingType"
+                                id="day"
+                                value="day"
+                                required
+                            >
+
+                            <label
+                                for="day"
+                                class="booking-type-label"
+                            >
+                                ☀️ Day
+                            </label>
+
+                        </div>
+
+
+                        <!-- ========================================
+                             NIGHT
+                        ========================================= -->
+
+                        <div class="booking-type-option">
+
+                            <input
+                                type="radio"
+                                name="bookingType"
+                                id="night"
+                                value="night"
+                                required
+                            >
+
+                            <label
+                                for="night"
+                                class="booking-type-label"
+                            >
+                                🌙 Night
+                            </label>
+
+                        </div>
+
+
+                        <!-- ========================================
+                             FULL DAY
+                        ========================================= -->
+
+                        <div class="booking-type-option">
+
+                            <input
+                                type="radio"
+                                name="bookingType"
+                                id="fullDay"
+                                value="fullDay"
+                                required
+                            >
+
+                            <label
+                                for="fullDay"
+                                class="booking-type-label"
+                            >
+                                ☀️🌙 Day + Night
+                            </label>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- ========================================
+                     START DATE
+                ========================================= -->
+
+                <div class="form-group">
+
+                    <label for="startDate">
+                        Start Date
+                    </label>
+
+
+                    <input
+                        type="date"
+                        name="startDate"
+                        id="startDate"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- ========================================
+                     END DATE
+                ========================================= -->
+
+                <div class="form-group">
+
+                    <label for="endDate">
+                        End Date
+                    </label>
+
+
+                    <input
+                        type="date"
+                        name="endDate"
+                        id="endDate"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- ========================================
+                     PRICE BOX
+                ========================================= -->
+
+                <div
+                    class="price-box"
+                    id="priceBox"
+                    style="display: none;"
+                >
+
+
+                    <!-- BOOKING TYPE -->
+
+                    <div class="price-row">
+
+                        <span>
+                            Booking Type
+                        </span>
+
+                        <strong id="selectedType">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <!-- DURATION -->
+
+                    <div class="price-row">
+
+                        <span>
+                            Duration
+                        </span>
+
+                        <strong id="durationText">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <!-- MONTHLY PRICE -->
+
+                    <div class="price-row">
+
+                        <span>
+                            Monthly Price
+                        </span>
+
+                        <strong>
+                            ₹<span id="monthlyPrice">0</span>
+                        </strong>
+
+                    </div>
+
+
+                    <!-- TOTAL PRICE -->
+
+                    <div class="price-row total-price">
+
+                        <span>
+                            Total Amount
+                        </span>
+
+                        <strong>
+                            ₹<span id="totalPrice">0</span>
+                        </strong>
+
+                    </div>
+
+
+                    <!-- PRICE NOTE -->
+
+                    <p class="price-note">
+                        Price is calculated according to the
+                        current price set by the admin.
+                    </p>
+
+
+                </div>
+
+
+                <!-- ========================================
+                     PAYMENT / ERROR MESSAGE
+                ========================================= -->
+
+                <div
+                    id="paymentMessage"
+                    class="payment-message"
+                    role="alert"
+                    aria-live="polite"
+                ></div>
+
+
+                <!-- ========================================
+                     SUBMIT BUTTON
+                ========================================= -->
+
+                <button
+                    type="submit"
+                    class="btn btn-primary booking-button"
+                    id="bookingButton"
+                >
+                    Continue to Payment →
+                </button>
+
+
+            </form>
+
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<!-- ========================================
+     FOOTER
+========================================= -->
+
+<%- include("../includes/footer.ejs") %>
+
+
+<!-- ========================================
+     JAVASCRIPT
+========================================= -->
+
+<script>
+
+
+    // ==================================================
+    // PRICING DATA FROM SERVER
+    // ==================================================
+
+    const pricingData =
+        <%- JSON.stringify(pricing || []) %>;
+
+
+    // ==================================================
+    // ELEMENTS
+    // ==================================================
+
+    const bookingForm =
+        document.getElementById("bookingForm");
+
+
+    const startDate =
+        document.getElementById("startDate");
+
+
+    const endDate =
+        document.getElementById("endDate");
+
+
+    const priceBox =
+        document.getElementById("priceBox");
+
+
+    const selectedType =
+        document.getElementById("selectedType");
+
+
+    const durationText =
+        document.getElementById("durationText");
+
+
+    const monthlyPrice =
+        document.getElementById("monthlyPrice");
+
+
+    const totalPrice =
+        document.getElementById("totalPrice");
+
+
+    const bookingButton =
+        document.getElementById("bookingButton");
+
+
+    const paymentMessage =
+        document.getElementById("paymentMessage");
+
+
+    // ==================================================
+    // SHOW MESSAGE
+    // ==================================================
+
+    function showMessage(message) {
+
+        paymentMessage.textContent =
+            message;
+
+        paymentMessage.style.display =
+            "block";
+
+    }
+
+
+    // ==================================================
+    // HIDE MESSAGE
+    // ==================================================
+
+    function hideMessage() {
+
+        paymentMessage.textContent =
+            "";
+
+        paymentMessage.style.display =
+            "none";
+
+    }
+
+
+    // ==================================================
+    // GET PRICE
+    // ==================================================
+
+    function getPrice(type) {
+
+        if (!Array.isArray(pricingData)) {
+
+            return null;
+
+        }
+
+
+        const item =
+            pricingData.find(function(price) {
+
+                return price &&
+                       price.type === type;
+
+            });
+
+
+        if (!item) {
+
+            return null;
+
+        }
+
+
+        const price =
+            Number(item.price);
+
+
+        if (
+            !Number.isFinite(price) ||
+            price <= 0
+        ) {
+
+            return null;
+
+        }
+
+
+        return price;
+
+    }
+
+
+    // ==================================================
+    // CALCULATE TOTAL
+    // ==================================================
+
+    function calculateTotal() {
+
+        const selected =
+            document.querySelector(
+                'input[name="bookingType"]:checked'
+            );
+
+
+        if (
+            !selected ||
+            !startDate.value ||
+            !endDate.value
+        ) {
+
+            return null;
+
+        }
+
+
+        const price =
+            getPrice(selected.value);
+
+
+        if (price === null) {
+
+            return null;
+
+        }
+
+
+        const start =
+            new Date(
+                startDate.value + "T00:00:00"
+            );
+
+
+        const end =
+            new Date(
+                endDate.value + "T00:00:00"
+            );
+
+
+        if (
+            Number.isNaN(start.getTime()) ||
+            Number.isNaN(end.getTime())
+        ) {
+
+            return null;
+
+        }
+
+
+        if (end < start) {
+
+            return null;
+
+        }
+
+
+        // ==============================================
+        // MILLISECONDS IN ONE DAY
+        // ==============================================
+
+        const millisecondsPerDay =
+            1000 *
+            60 *
+            60 *
+            24;
+
+
+        // ==============================================
+        // INCLUSIVE DAYS
+        // ==============================================
+
+        const days =
+            Math.floor(
+                (
+                    end.getTime() -
+                    start.getTime()
+                ) /
+                millisecondsPerDay
+            ) + 1;
+
+
+        if (
+            !Number.isFinite(days) ||
+            days <= 0
+        ) {
+
+            return null;
+
+        }
+
+
+        // ==============================================
+        // DAILY PRICE
+        //
+        // Backend bhi monthly price ko 30 days
+        // ke according calculate kar raha hai.
+        // ==============================================
+
+        const dailyPrice =
+            price / 30;
+
+
+        // ==============================================
+        // TOTAL
+        // ==============================================
+
+        const total =
+            Math.round(
+                dailyPrice * days
+            );
+
+
+        if (
+            !Number.isFinite(total) ||
+            total <= 0
+        ) {
+
+            return null;
+
+        }
+
+
+        return {
+
+            type:
+                selected.value,
+
+            price:
+                price,
+
+            days:
+                days,
+
+            total:
+                total
+
+        };
+
+    }
+
+
+    // ==================================================
+    // UPDATE PRICE
+    // ==================================================
+
+    function updatePrice() {
+
+        hideMessage();
+
+
+        const calculated =
+            calculateTotal();
+
+
+        // ==============================================
+        // INVALID DATA
+        // ==============================================
+
+        if (!calculated) {
+
+            priceBox.style.display =
+                "none";
+
+            return;
+
+        }
+
+
+        // ==============================================
+        // TYPE LABEL
+        // ==============================================
+
+        let typeLabel =
+            "";
+
+
+        if (
+            calculated.type === "day"
+        ) {
+
+            typeLabel =
+                "Day";
+
+        } else if (
+            calculated.type === "night"
+        ) {
+
+            typeLabel =
+                "Night";
+
+        } else if (
+            calculated.type === "fullDay"
+        ) {
+
+            typeLabel =
+                "Day + Night";
+
+        }
+
+
+        // ==============================================
+        // SET VALUES
+        // ==============================================
+
+        selectedType.textContent =
+            typeLabel;
+
+
+        durationText.textContent =
+            calculated.days +
+            (
+                calculated.days === 1
+                    ? " Day"
+                    : " Days"
+            );
+
+
+        monthlyPrice.textContent =
+            calculated.price.toLocaleString(
+                "en-IN"
+            );
+
+
+        totalPrice.textContent =
+            calculated.total.toLocaleString(
+                "en-IN"
+            );
+
+
+        // ==============================================
+        // SHOW PRICE BOX
+        // ==============================================
+
+        priceBox.style.display =
+            "block";
+
+    }
+
+
+    // ==================================================
+    // TODAY'S DATE
+    // ==================================================
+
+    const today =
+        new Date();
+
+
+    const todayString =
+        today.getFullYear() +
+        "-" +
+        String(
+            today.getMonth() + 1
+        ).padStart(2, "0") +
+        "-" +
+        String(
+            today.getDate()
+        ).padStart(2, "0");
+
+
+    // ==================================================
+    // SET MINIMUM DATES
+    // ==================================================
+
+    startDate.min =
+        todayString;
+
+
+    endDate.min =
+        todayString;
+
+
+    // ==================================================
+    // BOOKING TYPE EVENTS
+    // ==================================================
+
+    document
+        .querySelectorAll(
+            'input[name="bookingType"]'
+        )
+        .forEach(function(radio) {
+
+            radio.addEventListener(
+                "change",
+                function() {
+
+                    updatePrice();
+
+                }
+            );
+
+        });
+
+
+    // ==================================================
+    // START DATE EVENT
+    // ==================================================
+
+    startDate.addEventListener(
+        "change",
+        function() {
+
+            hideMessage();
+
+
+            if (startDate.value) {
+
+                // ======================================
+                // END DATE CANNOT BE BEFORE START DATE
+                // ======================================
+
+                endDate.min =
+                    startDate.value;
+
+
+                // ======================================
+                // CLEAR INVALID END DATE
+                // ======================================
+
+                if (
+                    endDate.value &&
+                    endDate.value < startDate.value
+                ) {
+
+                    endDate.value =
+                        "";
+
+                }
+
+            } else {
+
+                endDate.min =
+                    todayString;
+
+            }
+
+
+            updatePrice();
+
+        }
+    );
+
+
+    // ==================================================
+    // END DATE EVENT
+    // ==================================================
+
+    endDate.addEventListener(
+        "change",
+        function() {
+
+            hideMessage();
+
+            updatePrice();
+
+        }
+    );
+
+
+    // ==================================================
+    // FORM SUBMIT
+    // ==================================================
+
+    bookingForm.addEventListener(
+        "submit",
+        function(event) {
+
+
+            // ==========================================
+            // CLEAR OLD MESSAGE
+            // ==========================================
+
+            hideMessage();
+
+
+            // ==========================================
+            // CALCULATE BOOKING
+            // ==========================================
+
+            const calculated =
+                calculateTotal();
+
+
+            // ==========================================
+            // VALIDATE BOOKING DATA
+            // ==========================================
+
+            if (!calculated) {
+
+                event.preventDefault();
+
+
+                showMessage(
+                    "Please select a valid booking type and valid dates."
+                );
+
+
+                return;
+
+            }
+
+
+            // ==========================================
+            // VALIDATE TOTAL
+            // ==========================================
+
+            if (
+                calculated.total < 1 ||
+                !Number.isFinite(calculated.total)
+            ) {
+
+                event.preventDefault();
+
+
+                showMessage(
+                    "Invalid payment amount."
+                );
+
+
+                return;
+
+            }
+
+
+            // ==========================================
+            // CHECK SELECTED SEAT
+            // ==========================================
+
+            const seatInput =
+                document.getElementById("seat");
+
+
+            const hiddenSeat =
+                bookingForm.querySelector(
+                    'input[name="seat"]'
+                );
+
+
+            // ==========================================
+            // DROPDOWN SEAT
+            // ==========================================
+
+            if (
+                seatInput &&
+                !seatInput.value
+            ) {
+
+                event.preventDefault();
+
+
+                showMessage(
+                    "Please select a seat."
+                );
+
+
+                return;
+
+            }
+
+
+            // ==========================================
+            // HIDDEN SEAT
+            // ==========================================
+
+            if (
+                !seatInput &&
+                !hiddenSeat
+            ) {
+
+                event.preventDefault();
+
+
+                showMessage(
+                    "Seat information is missing."
+                );
+
+
+                return;
+
+            }
+
+
+            // ==========================================
+            // VALIDATE DATE ON FINAL SUBMIT
+            // ==========================================
+
+            if (
+                startDate.value < todayString
+            ) {
+
+                event.preventDefault();
+
+
+                showMessage(
+                    "Start date cannot be in the past."
+                );
+
+
+                return;
+
+            }
+
+
+            if (
+                endDate.value < startDate.value
+            ) {
+
+                event.preventDefault();
+
+
+                showMessage(
+                    "End date cannot be before start date."
+                );
+
+
+                return;
+
+            }
+
+
+            // ==========================================
+            // DISABLE BUTTON
+            // ==========================================
+
+            bookingButton.disabled =
+                true;
+
+
+            bookingButton.textContent =
+                "Creating Booking...";
+
+
+            /*
+             * IMPORTANT
+             *
+             * Yahan event.preventDefault()
+             * nahi kiya gaya hai.
+             *
+             * Browser normal form POST karega:
+             *
+             * POST /bookings
+             *
+             * Backend:
+             *
+             * 1. Booking create karega
+             *
+             * 2. Razorpay order create karega
+             *
+             * 3. Razorpay order ID save karega
+             *
+             * 4. Confirmation page par redirect karega
+             *
+             * Backend response:
+             *
+             * res.redirect(
+             *     `/bookings/confirmation/${booking._id}`
+             * );
+             *
+             */
+
+
+        }
+    );
+
+
+</script>
+
+
+</body>
+
+</html>

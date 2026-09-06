@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>KAVIKA - Admin Notes</title>
+<link rel="icon" href="images/kavika.jpeg">
+    <link rel="stylesheet" href="/css/style.css">
+
+</head>
+
+<body>
+
+    <%- include("../includes/navbar.ejs") %>
+
+
+    <main class="admin-notes-page">
+
+        <section class="admin-notes-container">
+
+
+            <!-- PAGE HEADER -->
+
+            <div class="admin-notes-header">
+
+                <p class="admin-notes-small-title">
+                    ADMIN PANEL
+                </p>
+
+                <h1>
+                    Manage Notes
+                </h1>
+
+                <p>
+                    Upload study material and manage
+                    existing PDF notes.
+                </p>
+
+            </div>
+
+
+            <!-- UPLOAD CARD -->
+
+            <div class="notes-upload-card">
+
+                <div class="notes-card-heading">
+
+                    <h2>
+                        Upload New Notes
+                    </h2>
+
+                    <p>
+                        Add a title, description and PDF file.
+                    </p>
+
+                </div>
+
+
+                <form
+                    action="/notes/admin/upload"
+                    method="POST"
+                    enctype="multipart/form-data"
+                    class="notes-upload-form"
+                >
+
+                    <div class="notes-form-group">
+
+                        <label for="title">
+                            Notes Title
+                        </label>
+
+                        <input
+                            type="text"
+                            id="title"
+                            name="title"
+                            placeholder="e.g. Computer Network Security Notes"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="notes-form-group">
+
+                        <label for="description">
+                            Description
+                        </label>
+
+                        <textarea
+                            id="description"
+                            name="description"
+                            rows="5"
+                            placeholder="Write what these notes are about..."
+                            required
+                        ></textarea>
+
+                    </div>
+
+
+                    <div class="notes-form-group">
+
+                        <label for="pdf">
+                            Select PDF
+                        </label>
+
+                        <input
+                            type="file"
+                            id="pdf"
+                            name="pdf"
+                            accept=".pdf,application/pdf"
+                            required
+                        >
+
+                        <small>
+                            Only PDF files are allowed.
+                        </small>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="notes-upload-button"
+                    >
+                        Upload Notes
+                        →
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- EXISTING NOTES -->
+
+            <div class="admin-notes-list-section">
+
+                <div class="admin-notes-list-header">
+
+                    <div>
+
+                        <p class="admin-notes-small-title">
+                            LIBRARY MATERIAL
+                        </p>
+
+                        <h2>
+                            Uploaded Notes
+                        </h2>
+
+                    </div>
+
+                    <span class="notes-count">
+                        <%= notes.length %> Notes
+                    </span>
+
+                </div>
+
+
+                <% if (notes.length === 0) { %>
+
+                    <div class="no-notes">
+
+                        <div class="no-notes-icon">
+                            📚
+                        </div>
+
+                        <h3>
+                            No Notes Uploaded
+                        </h3>
+
+                        <p>
+                            Upload your first PDF notes
+                            using the form above.
+                        </p>
+
+                    </div>
+
+                <% } else { %>
+
+
+                    <div class="admin-notes-grid">
+
+                        <% notes.forEach(note => { %>
+
+                            <article class="admin-note-card">
+
+
+                                <div class="admin-note-icon">
+                                    PDF
+                                </div>
+
+
+                                <div class="admin-note-content">
+
+                                    <h3>
+                                        <%= note.title %>
+                                    </h3>
+
+                                    <p>
+                                        <%= note.description %>
+                                    </p>
+
+                                    <span class="admin-note-file">
+                                        <%= note.originalName %>
+                                    </span>
+
+                                </div>
+
+
+                                <div class="admin-note-actions">
+
+                                    <a
+                                        href="<%= note.file %>"
+                                        target="_blank"
+                                        class="note-view-button"
+                                    >
+                                        View
+                                    </a>
+
+
+                                    <a
+                                        href="<%= note.file %>"
+                                        download
+                                        class="note-download-button"
+                                    >
+                                        Download
+                                    </a>
+
+
+                                    <form
+                                        action="/notes/admin/delete/<%= note._id %>"
+                                        method="POST"
+                                        onsubmit="return confirm('Are you sure you want to delete this note?');"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="note-delete-button"
+                                        >
+                                            Delete
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </article>
+
+                        <% }) %>
+
+                    </div>
+
+                <% } %>
+
+            </div>
+
+
+        </section>
+
+    </main>
+
+
+</body>
+
+</html>

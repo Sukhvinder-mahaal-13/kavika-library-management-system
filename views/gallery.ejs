@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>KAVIKA - Gallery</title>
+
+    <!-- ========================================
+         FAVICON
+         ======================================== -->
+
+    <link
+        rel="icon"
+        type="image/jpeg"
+        href="/images/kavika.jpeg"
+    >
+
+    <!-- ========================================
+         MAIN CSS
+         ======================================== -->
+
+    <link
+        rel="stylesheet"
+        href="/css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- ========================================
+         NAVBAR
+         ======================================== -->
+
+    <%- include("includes/navbar.ejs") %>
+
+
+    <!-- ========================================
+         MAIN GALLERY
+         ======================================== -->
+
+    <main class="public-gallery-page">
+
+
+        <!-- ========================================
+             GALLERY HEADER
+             ======================================== -->
+
+        <section class="public-gallery-header">
+
+            <p class="eyebrow">
+                KAVIKA LIBRARY
+            </p>
+
+            <h1>
+                Gallery
+            </h1>
+
+            <p>
+                Explore moments and memories from KAVIKA.
+            </p>
+
+        </section>
+
+
+        <!-- ========================================
+             GALLERY IMAGES
+             ======================================== -->
+
+        <% if (images && images.length > 0) { %>
+
+
+            <section
+                class="public-gallery-grid"
+                aria-label="KAVIKA Gallery"
+            >
+
+
+                <% images.forEach(image => { %>
+
+
+                    <article
+                        class="public-gallery-card"
+                    >
+
+
+                        <!-- ========================================
+                             IMAGE
+                             ======================================== -->
+
+                        <div class="public-gallery-image">
+
+                            <img
+                                src="<%= image.image %>"
+                                alt="<%= image.title %>"
+                                loading="lazy"
+                                decoding="async"
+                            >
+
+                        </div>
+
+
+                        <!-- ========================================
+                             TITLE
+                             ======================================== -->
+
+                        <div class="public-gallery-content">
+
+                            <h3>
+                                <%= image.title %>
+                            </h3>
+
+                        </div>
+
+
+                    </article>
+
+
+                <% }) %>
+
+
+            </section>
+
+
+        <% } else { %>
+
+
+            <!-- ========================================
+                 NO IMAGES
+                 ======================================== -->
+
+            <section
+                class="gallery-no-images"
+                aria-label="Gallery is empty"
+            >
+
+                <div
+                    class="no-images-icon"
+                    aria-hidden="true"
+                >
+                    🖼️
+                </div>
+
+                <h3>
+                    No Photos Yet
+                </h3>
+
+                <p>
+                    Gallery photos will appear here.
+                </p>
+
+            </section>
+
+
+        <% } %>
+
+
+    </main>
+
+
+    <!-- ========================================
+         FOOTER
+         ======================================== -->
+
+    <%- include("includes/footer.ejs") %>
+
+
+</body>
+
+</html>
+

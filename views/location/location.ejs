@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>KAVIKA - Location</title>
+<link rel="icon" type="image/jpeg" href="/images/kavika.jpeg" >
+    <link rel="stylesheet" href="/css/style.css">
+
+</head>
+
+<body>
+
+    <%- include("../includes/navbar.ejs") %>
+
+
+    <main class="location-page">
+
+        <section class="location-section">
+
+            <div class="location-header">
+
+                <p class="location-small-title">
+                    FIND US
+                </p>
+
+                <h1>
+                    KAVIKA Library
+                </h1>
+
+                <p>
+                    Visit KAVIKA Library and find us easily
+                    using the map below.
+                </p>
+
+            </div>
+
+
+            <div class="location-card">
+
+                <div class="location-map">
+
+                    <iframe
+                        src="https://www.google.com/maps?q=29.218711,77.9492724&z=18&output=embed"
+                        width="100%"
+                        height="450"
+                        style="border:0;"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+
+                </div>
+
+
+                <div class="location-info">
+
+                    <div>
+
+                        <span class="location-label">
+                            📍 LOCATION
+                        </span>
+
+                        <h2>
+                            KAVIKA Library
+                        </h2>
+
+                        <p>
+                            Use Google Maps to view the exact
+                            location and get directions.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="https://maps.app.goo.gl/JCZyUVFJdeNyypTo6"
+                        target="_blank"
+                        class="location-button"
+                    >
+                        Get Directions
+                        →
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>
