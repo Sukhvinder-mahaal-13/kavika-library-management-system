@@ -1,236 +1,241 @@
-
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
-    <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<meta charset="UTF-8">
 
-  <link rel="icon" type="image/jpeg" href="/images/kavika.jpeg" >
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <title>KAVIKA - Login</title>
+<link
+    rel="icon"
+    type="image/jpeg"
+    href="/images/kavika.jpeg"
+>
 
-    <link
-        rel="stylesheet"
-        href="/css/style.css"
-    >
+<title>KAVIKA - Login</title>
+
+<link
+    rel="stylesheet"
+    href="/css/style.css"
+>
+
 
 </head>
 
-
 <body>
 
-    <!-- ========================================
-         NAVBAR
-    ======================================== -->
 
-    <%- include("../includes/navbar.ejs") %>
+<!-- ========================================
+     NAVBAR
+======================================== -->
 
-
-    <!-- ========================================
-         LOGIN PAGE
-    ======================================== -->
-
-    <main class="auth-page">
-
-        <div class="auth-container">
-
-            <div class="auth-card">
+<%- include("../includes/navbar.ejs") %>
 
 
-                <!-- ========================================
-                     VERIFICATION SUCCESS
-                ======================================== -->
+<!-- ========================================
+     LOGIN PAGE
+======================================== -->
 
-                <% if (verified) { %>
+<main class="auth-page">
 
-                    <div
-                        style="
-                            margin-bottom: 25px;
-                            padding: 14px 16px;
-                            border: 1px solid rgba(80, 200, 120, .35);
-                            border-radius: 12px;
-                            background: rgba(80, 200, 120, .08);
-                            color: #7ee2a8;
-                            font-size: 13px;
-                            line-height: 1.5;
-                        "
-                    >
+    <div class="auth-container">
 
-                        ✓ Email verified
-                        successfully. You can now login.
-
-                    </div>
-
-                <% } %>
+        <div class="auth-card">
 
 
-                <!-- ========================================
-                     HEADER
-                ======================================== -->
+            <!-- ========================================
+                 VERIFICATION SUCCESS
+            ======================================== -->
 
-                <div class="auth-header">
+            <% if (verified) { %>
 
-                    <p class="eyebrow">
-                        WELCOME BACK
-                    </p>
-
-                    <h1>
-                        Login
-                    </h1>
-
-                    <p>
-                        Login to manage your KAVIKA
-                        bookings.
-                    </p>
-
-                </div>
-
-
-                <!-- ========================================
-                     LOGIN FORM
-                ======================================== -->
-
-                <form
-                    action="/users/login"
-                    method="POST"
-                    class="auth-form"
-                    id="loginForm"
+                <div
+                    style="
+                        margin-bottom: 25px;
+                        padding: 14px 16px;
+                        border: 1px solid rgba(80, 200, 120, .35);
+                        border-radius: 12px;
+                        background: rgba(80, 200, 120, .08);
+                        color: #7ee2a8;
+                        font-size: 13px;
+                        line-height: 1.5;
+                    "
                 >
 
-
-                    <!-- ========================================
-                         EMAIL
-                    ======================================== -->
-
-                    <div class="form-group">
-
-                        <label for="email">
-                            Email Address
-                        </label>
-
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="Enter your email"
-                            autocomplete="email"
-                            maxlength="120"
-                            required
-                        >
-
-                    </div>
-
-
-                    <!-- ========================================
-                         PASSWORD
-                    ======================================== -->
-
-                    <div class="form-group">
-
-                        <label for="password">
-                            Password
-                        </label>
-
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="Enter your password"
-                            autocomplete="current-password"
-                            required
-                        >
-
-                    </div>
-
-
-                    <!-- ========================================
-                         LOGIN BUTTON
-                    ======================================== -->
-
-                    <button
-                        type="submit"
-                        class="btn btn-primary auth-button"
-                        id="loginButton"
-                    >
-
-                        Login →
-
-                    </button>
-
-
-                </form>
-
-
-                <!-- ========================================
-                     REGISTER
-                ======================================== -->
-
-                <div class="auth-footer">
-
-                    <p>
-                        Don't have an account?
-                    </p>
-
-                    <a href="/users/register">
-                        Create an account →
-                    </a>
+                    ✓ Email verified
+                    successfully. You can now login.
 
                 </div>
 
+            <% } %>
+
+
+            <!-- ========================================
+                 HEADER
+            ======================================== -->
+
+            <div class="auth-header">
+
+                <p class="eyebrow">
+                    WELCOME BACK
+                </p>
+
+                <h1>
+                    Login
+                </h1>
+
+                <p>
+                    Login to manage your KAVIKA
+                    bookings.
+                </p>
 
             </div>
 
+
+            <!-- ========================================
+                 LOGIN FORM
+            ======================================== -->
+
+            <form
+                action="/users/login"
+                method="POST"
+                class="auth-form"
+                id="loginForm"
+            >
+
+
+                <!-- ========================================
+                     EMAIL
+                ======================================== -->
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Email Address
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        maxlength="120"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- ========================================
+                     PASSWORD
+                ======================================== -->
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- ========================================
+                     LOGIN BUTTON
+                ======================================== -->
+
+                <button
+                    type="submit"
+                    class="btn btn-primary auth-button"
+                    id="loginButton"
+                >
+
+                    Login →
+
+                </button>
+
+
+            </form>
+
+
+            <!-- ========================================
+                 REGISTER
+            ======================================== -->
+
+            <div class="auth-footer">
+
+                <p>
+                    Don't have an account?
+                </p>
+
+                <a href="/users/register">
+                    Create an account →
+                </a>
+
+            </div>
+
+
         </div>
 
-    </main>
+    </div>
+
+</main>
 
 
-    <!-- ========================================
-         FOOTER
-    ======================================== -->
+<!-- ========================================
+     FOOTER
+======================================== -->
 
-    <%- include("../includes/footer.ejs") %>
-
-
-    <!-- ========================================
-         LOGIN SCRIPT
-    ======================================== -->
-
-    <script>
-
-        const loginForm =
-            document.getElementById("loginForm");
-
-        const loginButton =
-            document.getElementById("loginButton");
+<%- include("../includes/footer.ejs") %>
 
 
-        // ========================================
-        // PREVENT DOUBLE SUBMIT
-        // ========================================
+<!-- ========================================
+     LOGIN SCRIPT
+======================================== -->
 
-        loginForm.addEventListener(
-            "submit",
-            function () {
+<script>
 
-                loginButton.disabled = true;
+    const loginForm =
+        document.getElementById("loginForm");
 
-                loginButton.textContent =
-                    "Logging in...";
+    const loginButton =
+        document.getElementById("loginButton");
 
-            }
-        );
 
-    </script>
+    // ========================================
+    // PREVENT DOUBLE SUBMIT
+    // ========================================
+
+    loginForm.addEventListener(
+        "submit",
+        function () {
+
+            loginButton.disabled = true;
+
+            loginButton.textContent =
+                "Logging in...";
+
+        }
+    );
+
+</script>
 
 
 </body>
 
 </html>
-

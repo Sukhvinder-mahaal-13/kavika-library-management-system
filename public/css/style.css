@@ -164,6 +164,7 @@ a {
 
 .navbar-links a::after {
 
+    
     content: "";
 
     position: absolute;
@@ -5708,6 +5709,7 @@ body {
     color: var(--text);
 
 }  
+ 
 /* ========================================
    KAVIKA GALLERY
 ======================================== */
@@ -6402,7 +6404,7 @@ body {
     display: grid;
 
     grid-template-columns:
-        repeat(3, minmax(0, 1fr));
+        repeat(2, minmax(0, 1fr));
 
     gap: 32px;
 
@@ -7007,7 +7009,6 @@ body {
     line-height: 1.6;
     font-size: 14px;
 }
-
 
 /* ========================================
    UPLOAD FORM

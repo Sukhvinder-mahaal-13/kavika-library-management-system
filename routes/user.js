@@ -1,4 +1,3 @@
-
 const express = require("express");
 const router = express.Router();
 
@@ -7,21 +6,40 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 
-// ========================================
+
+// =====================================================
+// ADMIN EMAILS
+// =====================================================
+//
+// In email addresses se registration karne par
+// account automatically ADMIN banega.
+//
+// Baaki sab registered users STUDENT honge.
+// =====================================================
+
+const ADMIN_EMAILS = [
+    "sukhimahaal373@gmail.com",
+    "akyadavchemist@gmail.com"
+];
+
+
+// =====================================================
 // EMAIL CONFIGURATION
-// ========================================
+// =====================================================
 
 const emailTransporter = nodemailer.createTransport({
     service: "gmail",
+
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
     }
 });
 
-// ========================================
+
+// =====================================================
 // EMAIL CONFIGURATION CHECK
-// ========================================
+// =====================================================
 
 if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     console.warn(
@@ -29,27 +47,34 @@ if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     );
 }
 
-// ========================================
+
+// =====================================================
 // TEMPORARY REGISTRATION STORAGE
-// ========================================
+// =====================================================
+//
+// Registration complete hone se pehle user ka data
+// temporary memory mein rahega.
+//
+// OTP verify hone ke baad MongoDB mein user create hoga.
+// =====================================================
 
 const pendingRegistrations = new Map();
 
-// ========================================
+
+// =====================================================
 // OTP SETTINGS
-// ========================================
+// =====================================================
 
-const OTP_EXPIRY = 5 * 60 * 1000;
+const OTP_EXPIRY = 5 * 60 * 1000; // 5 minutes
 
-// Prevent repeated OTP requests
-const RESEND_COOLDOWN = 60 * 1000;
+const RESEND_COOLDOWN = 60 * 1000; // 60 seconds
 
-// Maximum number of resend attempts
 const MAX_RESEND_ATTEMPTS = 5;
 
-// ========================================
-// GENERATE OTP
-// ========================================
+
+// =====================================================
+// GENERATE 6 DIGIT OTP
+// =====================================================
 
 function generateOTP() {
     return crypto
@@ -57,27 +82,53 @@ function generateOTP() {
         .toString();
 }
 
-// ========================================
+
+// =====================================================
 // GENERATE REGISTRATION ID
-// ========================================
+// =====================================================
 
 function generateRegistrationId() {
-    return crypto.randomBytes(24).toString("hex");
+    return crypto
+        .randomBytes(24)
+        .toString("hex");
 }
 
-// ========================================
+
+// =====================================================
+// EMAIL VALIDATION
+// =====================================================
+
+function isValidEmail(email) {
+    const emailRegex =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    return emailRegex.test(email);
+}
+
+
+// =====================================================
+// PHONE VALIDATION
+// =====================================================
+
+function isValidPhone(phone) {
+    return /^[6-9][0-9]{9}$/.test(phone);
+}
+
+
+// =====================================================
 // REGISTER PAGE
 // GET /users/register
-// ========================================
+// =====================================================
 
 router.get("/register", (req, res) => {
     return res.render("users/register");
 });
 
-// ========================================
+
+// =====================================================
 // START REGISTRATION
 // POST /users/register
-// ========================================
+// =====================================================
 
 router.post("/register", async (req, res) => {
     try {
@@ -89,9 +140,10 @@ router.post("/register", async (req, res) => {
             password
         } = req.body;
 
-        // ========================================
+
+        // =================================================
         // REQUIRED FIELDS
-        // ========================================
+        // =================================================
 
         if (
             !name ||
@@ -104,25 +156,31 @@ router.post("/register", async (req, res) => {
             );
         }
 
-        // ========================================
+
+        // =================================================
         // CLEAN DATA
-        // ========================================
+        // =================================================
 
-        const cleanName = String(name).trim();
+        const cleanName =
+            String(name).trim();
 
-        const cleanEmail = String(email)
-            .trim()
-            .toLowerCase();
+        const cleanEmail =
+            String(email)
+                .trim()
+                .toLowerCase();
 
-        const cleanPhone = String(phone)
-            .trim()
-            .replace(/\s+/g, "");
+        const cleanPhone =
+            String(phone)
+                .trim()
+                .replace(/\s+/g, "");
 
-        const cleanPassword = String(password);
+        const cleanPassword =
+            String(password);
 
-        // ========================================
+
+        // =================================================
         // NAME VALIDATION
-        // ========================================
+        // =================================================
 
         if (
             cleanName.length < 2 ||
@@ -133,32 +191,32 @@ router.post("/register", async (req, res) => {
             );
         }
 
-        // ========================================
+
+        // =================================================
         // EMAIL VALIDATION
-        // ========================================
+        // =================================================
 
-        const emailRegex =
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if (!emailRegex.test(cleanEmail)) {
+        if (!isValidEmail(cleanEmail)) {
             return res.status(400).send(
                 "Please enter a valid email address!"
             );
         }
 
-        // ========================================
-        // PHONE VALIDATION
-        // ========================================
 
-        if (!/^[6-9][0-9]{9}$/.test(cleanPhone)) {
+        // =================================================
+        // PHONE VALIDATION
+        // =================================================
+
+        if (!isValidPhone(cleanPhone)) {
             return res.status(400).send(
                 "Please enter a valid 10 digit mobile number!"
             );
         }
 
-        // ========================================
+
+        // =================================================
         // PASSWORD VALIDATION
-        // ========================================
+        // =================================================
 
         if (cleanPassword.length < 6) {
             return res.status(400).send(
@@ -172,9 +230,10 @@ router.post("/register", async (req, res) => {
             );
         }
 
-        // ========================================
+
+        // =================================================
         // CHECK EXISTING EMAIL
-        // ========================================
+        // =================================================
 
         const existingEmail = await User.findOne({
             email: cleanEmail
@@ -182,13 +241,14 @@ router.post("/register", async (req, res) => {
 
         if (existingEmail) {
             return res.status(400).send(
-                "Email already registered!"
+                "Email already registered! Please login instead."
             );
         }
 
-        // ========================================
+
+        // =================================================
         // CHECK EXISTING PHONE
-        // ========================================
+        // =================================================
 
         const existingPhone = await User.findOne({
             phone: cleanPhone
@@ -196,36 +256,55 @@ router.post("/register", async (req, res) => {
 
         if (existingPhone) {
             return res.status(400).send(
-                "Mobile number already registered!"
+                "Mobile number already registered! Please login instead."
             );
         }
 
-        // ========================================
-        // GENERATE EMAIL OTP
-        // ========================================
+
+        // =================================================
+        // GENERATE OTP
+        // =================================================
 
         const emailOTP = generateOTP();
 
-        // ========================================
-        // CREATE REGISTRATION ID
-        // ========================================
+
+        // =================================================
+        // GENERATE REGISTRATION ID
+        // =================================================
 
         const registrationId =
             generateRegistrationId();
 
-        // ========================================
+
+        // =================================================
+        // DETERMINE USER ROLE
+        // =================================================
+
+        const role =
+            ADMIN_EMAILS.includes(cleanEmail)
+                ? "admin"
+                : "student";
+
+
+        // =================================================
         // SAVE TEMPORARY REGISTRATION
-        // ========================================
+        // =================================================
 
         pendingRegistrations.set(
             registrationId,
             {
                 name: cleanName,
+
                 email: cleanEmail,
+
                 phone: cleanPhone,
+
                 password: cleanPassword,
 
+                role: role,
+
                 emailOTP: emailOTP,
+
                 emailVerified: false,
 
                 expiresAt:
@@ -238,9 +317,10 @@ router.post("/register", async (req, res) => {
             }
         );
 
-        // ========================================
+
+        // =================================================
         // SEND EMAIL OTP
-        // ========================================
+        // =================================================
 
         try {
 
@@ -262,7 +342,7 @@ router.post("/register", async (req, res) => {
                     <div style="
                         font-family: Arial, sans-serif;
                         max-width: 550px;
-                        margin: auto;
+                        margin: 30px auto;
                         padding: 30px;
                         background: #111;
                         color: #fff;
@@ -330,16 +410,18 @@ router.post("/register", async (req, res) => {
             );
         }
 
-        // ========================================
+
+        // =================================================
         // SAVE REGISTRATION ID IN SESSION
-        // ========================================
+        // =================================================
 
         req.session.registrationId =
             registrationId;
 
-        // ========================================
+
+        // =================================================
         // SAVE SESSION
-        // ========================================
+        // =================================================
 
         req.session.save((err) => {
 
@@ -377,19 +459,21 @@ router.post("/register", async (req, res) => {
     }
 });
 
-// ========================================
+
+// =====================================================
 // EMAIL OTP VERIFICATION PAGE
 // GET /users/verify-otp
-// ========================================
+// =====================================================
 
 router.get("/verify-otp", (req, res) => {
 
     const registrationId =
         req.session.registrationId;
 
-    // ========================================
+
+    // =================================================
     // SESSION CHECK
-    // ========================================
+    // =================================================
 
     if (!registrationId) {
         return res.redirect(
@@ -397,14 +481,16 @@ router.get("/verify-otp", (req, res) => {
         );
     }
 
-    // ========================================
+
+    // =================================================
     // GET REGISTRATION
-    // ========================================
+    // =================================================
 
     const registration =
         pendingRegistrations.get(
             registrationId
         );
+
 
     if (!registration) {
 
@@ -415,9 +501,10 @@ router.get("/verify-otp", (req, res) => {
         );
     }
 
-    // ========================================
-    // EXPIRY CHECK
-    // ========================================
+
+    // =================================================
+    // CHECK OTP EXPIRY
+    // =================================================
 
     if (
         Date.now() >
@@ -435,9 +522,10 @@ router.get("/verify-otp", (req, res) => {
         );
     }
 
-    // ========================================
+
+    // =================================================
     // SHOW OTP PAGE
-    // ========================================
+    // =================================================
 
     return res.render(
         "users/verify-otp",
@@ -447,10 +535,11 @@ router.get("/verify-otp", (req, res) => {
     );
 });
 
-// ========================================
+
+// =====================================================
 // VERIFY EMAIL OTP
 // POST /users/verify-otp
-// ========================================
+// =====================================================
 
 router.post("/verify-otp", async (req, res) => {
 
@@ -460,12 +549,14 @@ router.post("/verify-otp", async (req, res) => {
             emailOTP
         } = req.body;
 
-        // ========================================
+
+        // =================================================
         // SESSION CHECK
-        // ========================================
+        // =================================================
 
         const registrationId =
             req.session.registrationId;
+
 
         if (!registrationId) {
 
@@ -474,14 +565,16 @@ router.post("/verify-otp", async (req, res) => {
             );
         }
 
-        // ========================================
+
+        // =================================================
         // GET REGISTRATION
-        // ========================================
+        // =================================================
 
         const registration =
             pendingRegistrations.get(
                 registrationId
             );
+
 
         if (!registration) {
 
@@ -492,9 +585,10 @@ router.post("/verify-otp", async (req, res) => {
             );
         }
 
-        // ========================================
-        // EXPIRY CHECK
-        // ========================================
+
+        // =================================================
+        // CHECK OTP EXPIRY
+        // =================================================
 
         if (
             Date.now() >
@@ -512,9 +606,10 @@ router.post("/verify-otp", async (req, res) => {
             );
         }
 
-        // ========================================
-        // EMAIL OTP REQUIRED
-        // ========================================
+
+        // =================================================
+        // OTP REQUIRED
+        // =================================================
 
         if (!emailOTP) {
 
@@ -523,16 +618,18 @@ router.post("/verify-otp", async (req, res) => {
             );
         }
 
-        // ========================================
+
+        // =================================================
         // CLEAN OTP
-        // ========================================
+        // =================================================
 
         const cleanEmailOTP =
             String(emailOTP).trim();
 
-        // ========================================
+
+        // =================================================
         // OTP FORMAT
-        // ========================================
+        // =================================================
 
         if (
             !/^[0-9]{6}$/.test(
@@ -545,9 +642,10 @@ router.post("/verify-otp", async (req, res) => {
             );
         }
 
-        // ========================================
+
+        // =================================================
         // VERIFY OTP
-        // ========================================
+        // =================================================
 
         if (
             cleanEmailOTP !==
@@ -559,9 +657,10 @@ router.post("/verify-otp", async (req, res) => {
             );
         }
 
-        // ========================================
-        // DOUBLE CHECK EMAIL
-        // ========================================
+
+        // =================================================
+        // DOUBLE CHECK EMAIL + PHONE
+        // =================================================
 
         const existingUser =
             await User.findOne({
@@ -577,6 +676,7 @@ router.post("/verify-otp", async (req, res) => {
                 ]
             }).select("_id");
 
+
         if (existingUser) {
 
             pendingRegistrations.delete(
@@ -586,13 +686,14 @@ router.post("/verify-otp", async (req, res) => {
             delete req.session.registrationId;
 
             return res.status(400).send(
-                "Email or mobile number is already registered."
+                "Email or mobile number is already registered. Please login instead."
             );
         }
 
-        // ========================================
+
+        // =================================================
         // HASH PASSWORD
-        // ========================================
+        // =================================================
 
         const hashedPassword =
             await bcrypt.hash(
@@ -600,43 +701,47 @@ router.post("/verify-otp", async (req, res) => {
                 12
             );
 
-        // ========================================
+
+        // =================================================
         // CREATE USER
-        // ========================================
+        // =================================================
 
-        const user = new User({
+        const user =
+            new User({
 
-            name:
-                registration.name,
+                name:
+                    registration.name,
 
-            email:
-                registration.email,
+                email:
+                    registration.email,
 
-            phone:
-                registration.phone,
+                phone:
+                    registration.phone,
 
-            password:
-                hashedPassword,
+                password:
+                    hashedPassword,
 
-            isEmailVerified:
-                true,
+                isEmailVerified:
+                    true,
 
-            isVerified:
-                true,
+                isVerified:
+                    true,
 
-            role:
-                "student"
-        });
+                role:
+                    registration.role
+            });
 
-        // ========================================
+
+        // =================================================
         // SAVE USER
-        // ========================================
+        // =================================================
 
         await user.save();
 
-        // ========================================
-        // REMOVE TEMP DATA
-        // ========================================
+
+        // =================================================
+        // REMOVE TEMPORARY DATA
+        // =================================================
 
         pendingRegistrations.delete(
             registrationId
@@ -644,9 +749,10 @@ router.post("/verify-otp", async (req, res) => {
 
         delete req.session.registrationId;
 
-        // ========================================
-        // REDIRECT LOGIN
-        // ========================================
+
+        // =================================================
+        // REDIRECT TO LOGIN
+        // =================================================
 
         return res.redirect(
             "/users/login?verified=true"
@@ -654,16 +760,17 @@ router.post("/verify-otp", async (req, res) => {
 
     } catch (err) {
 
-        // ========================================
-        // DUPLICATE USER
-        // ========================================
+        // =================================================
+        // DUPLICATE USER ERROR
+        // =================================================
 
         if (err.code === 11000) {
 
             return res.status(400).send(
-                "Email or mobile number is already registered."
+                "Email or mobile number is already registered. Please login instead."
             );
         }
+
 
         console.error(
             "Email OTP verification error:",
@@ -676,21 +783,23 @@ router.post("/verify-otp", async (req, res) => {
     }
 });
 
-// ========================================
+
+// =====================================================
 // RESEND EMAIL OTP
 // POST /users/resend-otp
-// ========================================
+// =====================================================
 
 router.post("/resend-otp", async (req, res) => {
 
     try {
 
-        // ========================================
+        // =================================================
         // SESSION CHECK
-        // ========================================
+        // =================================================
 
         const registrationId =
             req.session.registrationId;
+
 
         if (!registrationId) {
 
@@ -699,14 +808,16 @@ router.post("/resend-otp", async (req, res) => {
             );
         }
 
-        // ========================================
+
+        // =================================================
         // GET REGISTRATION
-        // ========================================
+        // =================================================
 
         const registration =
             pendingRegistrations.get(
                 registrationId
             );
+
 
         if (!registration) {
 
@@ -717,9 +828,10 @@ router.post("/resend-otp", async (req, res) => {
             );
         }
 
-        // ========================================
+
+        // =================================================
         // MAX RESEND CHECK
-        // ========================================
+        // =================================================
 
         if (
             registration.resendAttempts >=
@@ -731,13 +843,15 @@ router.post("/resend-otp", async (req, res) => {
             );
         }
 
-        // ========================================
-        // RESEND COOLDOWN
-        // ========================================
+
+        // =================================================
+        // COOLDOWN CHECK
+        // =================================================
 
         const timeSinceLastOTP =
             Date.now() -
             registration.lastOtpSentAt;
+
 
         if (
             timeSinceLastOTP <
@@ -752,21 +866,24 @@ router.post("/resend-otp", async (req, res) => {
                     ) / 1000
                 );
 
+
             return res.status(429).send(
                 `Please wait ${remainingSeconds} seconds before requesting another OTP.`
             );
         }
 
-        // ========================================
+
+        // =================================================
         // GENERATE NEW OTP
-        // ========================================
+        // =================================================
 
         const emailOTP =
             generateOTP();
 
-        // ========================================
+
+        // =================================================
         // UPDATE REGISTRATION
-        // ========================================
+        // =================================================
 
         registration.emailOTP =
             emailOTP;
@@ -782,9 +899,10 @@ router.post("/resend-otp", async (req, res) => {
 
         registration.resendAttempts += 1;
 
-        // ========================================
+
+        // =================================================
         // SEND NEW OTP
-        // ========================================
+        // =================================================
 
         try {
 
@@ -806,7 +924,7 @@ router.post("/resend-otp", async (req, res) => {
                     <div style="
                         font-family: Arial, sans-serif;
                         max-width: 550px;
-                        margin: auto;
+                        margin: 30px auto;
                         padding: 30px;
                         background: #111;
                         color: #fff;
@@ -857,9 +975,10 @@ router.post("/resend-otp", async (req, res) => {
             );
         }
 
-        // ========================================
+
+        // =================================================
         // SUCCESS
-        // ========================================
+        // =================================================
 
         return res.send(
             "New email OTP has been sent successfully."
@@ -878,10 +997,11 @@ router.post("/resend-otp", async (req, res) => {
     }
 });
 
-// ========================================
+
+// =====================================================
 // LOGIN PAGE
 // GET /users/login
-// ========================================
+// =====================================================
 
 router.get("/login", (req, res) => {
 
@@ -894,10 +1014,17 @@ router.get("/login", (req, res) => {
     );
 });
 
-// ========================================
+
+// =====================================================
 // LOGIN USER
 // POST /users/login
-// ========================================
+//
+// IMPORTANT:
+// LOGIN IS ONLY WITH EMAIL + PASSWORD
+//
+// NO identifier
+// NO mobile login
+// =====================================================
 
 router.post("/login", async (req, res) => {
 
@@ -908,56 +1035,54 @@ router.post("/login", async (req, res) => {
             password
         } = req.body;
 
-        // ========================================
-        // REQUIRED FIELDS
-        // ========================================
 
-        if (
-            !email ||
-            !password
-        ) {
+        // =================================================
+        // REQUIRED FIELDS
+        // =================================================
+
+        if (!email || !password) {
 
             return res.status(400).send(
                 "Please enter email and password!"
             );
         }
 
-        // ========================================
+
+        // =================================================
         // CLEAN EMAIL
-        // ========================================
+        // =================================================
 
         const cleanEmail =
             String(email)
                 .trim()
                 .toLowerCase();
 
-        // ========================================
+
+        // =================================================
         // EMAIL VALIDATION
-        // ========================================
+        // =================================================
 
-        const emailRegex =
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if (!emailRegex.test(cleanEmail)) {
+        if (!isValidEmail(cleanEmail)) {
 
             return res.status(400).send(
                 "Please enter a valid email address!"
             );
         }
 
-        // ========================================
+
+        // =================================================
         // FIND USER
-        // PASSWORD IS select:false
-        // ========================================
+        // =================================================
 
         const user =
             await User.findOne({
                 email: cleanEmail
             }).select("+password");
 
-        // ========================================
+
+        // =================================================
         // USER NOT FOUND
-        // ========================================
+        // =================================================
 
         if (!user) {
 
@@ -966,13 +1091,14 @@ router.post("/login", async (req, res) => {
             );
         }
 
-        // ========================================
-        // VERIFY ACCOUNT
-        // ========================================
+
+        // =================================================
+        // CHECK EMAIL VERIFICATION
+        // =================================================
 
         if (
-            !user.isVerified ||
-            !user.isEmailVerified
+            !user.isEmailVerified ||
+            !user.isVerified
         ) {
 
             return res.status(403).send(
@@ -980,15 +1106,17 @@ router.post("/login", async (req, res) => {
             );
         }
 
-        // ========================================
+
+        // =================================================
         // CHECK PASSWORD
-        // ========================================
+        // =================================================
 
         const isPasswordCorrect =
             await bcrypt.compare(
                 String(password),
                 user.password
             );
+
 
         if (!isPasswordCorrect) {
 
@@ -997,10 +1125,10 @@ router.post("/login", async (req, res) => {
             );
         }
 
-        // ========================================
-        // SESSION REGENERATION
-        // Prevent session fixation
-        // ========================================
+
+        // =================================================
+        // REGENERATE SESSION
+        // =================================================
 
         req.session.regenerate((err) => {
 
@@ -1016,9 +1144,10 @@ router.post("/login", async (req, res) => {
                 );
             }
 
-            // ========================================
-            // CREATE NEW SESSION
-            // ========================================
+
+            // =================================================
+            // SAVE USER INFORMATION IN SESSION
+            // =================================================
 
             req.session.userId =
                 user._id.toString();
@@ -1032,9 +1161,10 @@ router.post("/login", async (req, res) => {
             req.session.userEmail =
                 user.email;
 
-            // ========================================
+
+            // =================================================
             // SAVE SESSION
-            // ========================================
+            // =================================================
 
             req.session.save((saveErr) => {
 
@@ -1050,9 +1180,10 @@ router.post("/login", async (req, res) => {
                     );
                 }
 
-                // ========================================
-                // ADMIN
-                // ========================================
+
+                // =================================================
+                // ADMIN LOGIN
+                // =================================================
 
                 if (
                     user.role === "admin"
@@ -1063,13 +1194,12 @@ router.post("/login", async (req, res) => {
                     );
                 }
 
-                // ========================================
-                // STUDENT
-                // ========================================
 
-                return res.redirect(
-                    "/"
-                );
+                // =================================================
+                // STUDENT LOGIN
+                // =================================================
+
+                return res.redirect("/");
             });
         });
 
@@ -1086,16 +1216,18 @@ router.post("/login", async (req, res) => {
     }
 });
 
-// ========================================
+
+// =====================================================
 // LOGOUT USER
 // GET /users/logout
-// ========================================
+// =====================================================
 
 router.get("/logout", (req, res) => {
 
     if (!req.session) {
         return res.redirect("/");
     }
+
 
     req.session.destroy((err) => {
 
@@ -1111,23 +1243,27 @@ router.get("/logout", (req, res) => {
             );
         }
 
+
         res.clearCookie(
             "connect.sid",
             {
                 httpOnly: true,
+
                 sameSite: "lax",
+
                 secure:
                     process.env.NODE_ENV === "production"
             }
         );
 
+
         return res.redirect("/");
     });
 });
 
-// ========================================
+
+// =====================================================
 // EXPORT ROUTER
-// ========================================
+// =====================================================
 
 module.exports = router;
-

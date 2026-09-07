@@ -1,3 +1,4 @@
+
 // ========================================
 // LOAD ENVIRONMENT VARIABLES
 // ========================================
@@ -13,7 +14,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const session = require("express-session");
-const MongoStore = require("connect-mongo").default;
+const { MongoStore } = require("connect-mongo");
 
 
 // ========================================
@@ -41,14 +42,14 @@ const Pricing = require("./models/Pricing");
 
 
 // ========================================
-// APP
+// CREATE EXPRESS APP
 // ========================================
 
 const app = express();
 
 
 // ========================================
-// PRODUCTION CHECK
+// PRODUCTION CONFIGURATION
 // ========================================
 
 if (process.env.NODE_ENV === "production") {
@@ -57,7 +58,7 @@ if (process.env.NODE_ENV === "production") {
 
 
 // ========================================
-// ENVIRONMENT VALIDATION
+// ENVIRONMENT VARIABLES CHECK
 // ========================================
 
 if (!process.env.MONGO_URI) {
@@ -81,7 +82,7 @@ if (!process.env.SESSION_SECRET) {
 
 
 // ========================================
-// BODY PARSING
+// BODY PARSER
 // ========================================
 
 app.use(
@@ -107,6 +108,14 @@ app.use(
 // ========================================
 // STATIC FILES
 // ========================================
+
+// public folder ke andar sab files
+// automatically browser mein accessible hongi.
+//
+// Example:
+// public/css/style.css
+// public/images/kavika.jpeg
+// public/notes/example.pdf
 
 app.use(
     express.static("public")
@@ -162,7 +171,7 @@ app.set(
 
 
 // ========================================
-// GLOBAL USER DATA
+// GLOBAL USER SESSION DATA
 // ========================================
 
 app.use(
@@ -188,9 +197,9 @@ app.use(
 // ========================================
 
 
-// ----------------------------------------
-// CONTACT
-// ----------------------------------------
+// ========================================
+// CONTACT ROUTES
+// ========================================
 
 app.use(
     "/contact",
@@ -198,9 +207,21 @@ app.use(
 );
 
 
-// ----------------------------------------
-// NOTES
-// ----------------------------------------
+// ========================================
+// NOTES ROUTES
+// ========================================
+//
+// Student notes page:
+// GET /notes
+//
+// Admin notes page:
+// GET /notes/admin
+//
+// Upload note:
+// POST /notes/admin/upload
+//
+// Delete note:
+// POST /notes/admin/delete/:id
 
 app.use(
     "/notes",
@@ -208,9 +229,9 @@ app.use(
 );
 
 
-// ----------------------------------------
-// LOCATION
-// ----------------------------------------
+// ========================================
+// LOCATION ROUTES
+// ========================================
 
 app.use(
     "/location",
@@ -218,9 +239,9 @@ app.use(
 );
 
 
-// ----------------------------------------
-// USERS
-// ----------------------------------------
+// ========================================
+// USER ROUTES
+// ========================================
 
 app.use(
     "/users",
@@ -228,9 +249,9 @@ app.use(
 );
 
 
-// ----------------------------------------
-// SEATS
-// ----------------------------------------
+// ========================================
+// SEAT ROUTES
+// ========================================
 
 app.use(
     "/seats",
@@ -238,9 +259,9 @@ app.use(
 );
 
 
-// ----------------------------------------
-// BOOKINGS
-// ----------------------------------------
+// ========================================
+// BOOKING ROUTES
+// ========================================
 
 app.use(
     "/bookings",
@@ -248,9 +269,9 @@ app.use(
 );
 
 
-// ----------------------------------------
-// ADMIN
-// ----------------------------------------
+// ========================================
+// ADMIN ROUTES
+// ========================================
 
 app.use(
     "/admin",
@@ -258,9 +279,9 @@ app.use(
 );
 
 
-// ----------------------------------------
-// GALLERY
-// ----------------------------------------
+// ========================================
+// GALLERY ROUTES
+// ========================================
 
 app.use(
     "/gallery",
@@ -320,7 +341,7 @@ app.get(
 
 
             // ========================================
-            // DEFAULT PRICES
+            // DEFAULT PRICING
             // ========================================
 
             const pricing = {
@@ -335,12 +356,13 @@ app.get(
 
 
             // ========================================
-            // DATABASE PRICES
+            // LOAD PRICING FROM DATABASE
             // ========================================
 
             pricingData.forEach(
                 item => {
 
+                    // DAY
                     if (
                         item.type === "day"
                     ) {
@@ -351,6 +373,7 @@ app.get(
                     }
 
 
+                    // NIGHT
                     if (
                         item.type === "night"
                     ) {
@@ -361,8 +384,13 @@ app.get(
                     }
 
 
-                    // Pricing model uses "fullDay"
-                    // Homepage object uses "full"
+                    // FULL DAY
+                    //
+                    // Database mein type:
+                    // fullDay
+                    //
+                    // Homepage mein:
+                    // full
 
                     if (
                         item.type === "fullDay"
@@ -378,7 +406,7 @@ app.get(
 
 
             // ========================================
-            // RENDER HOME
+            // RENDER HOME PAGE
             // ========================================
 
             return res.render(
@@ -412,7 +440,7 @@ app.get(
 
 
             // ========================================
-            // FALLBACK HOME
+            // FALLBACK HOME PAGE
             // ========================================
 
             return res.render(
@@ -450,6 +478,8 @@ app.get(
 // ========================================
 // CREATE 55 SEATS
 // ADMIN ONLY
+//
+// URL:
 // GET /create-seats
 // ========================================
 
@@ -460,7 +490,7 @@ app.get(
         try {
 
             // ========================================
-            // ADMIN SECURITY
+            // CHECK ADMIN
             // ========================================
 
             if (
@@ -479,7 +509,7 @@ app.get(
 
 
             // ========================================
-            // FIND EXISTING SEATS
+            // GET EXISTING SEATS
             // ========================================
 
             const existingSeats =
@@ -487,6 +517,10 @@ app.get(
                     .select("seatNumber")
                     .lean();
 
+
+            // ========================================
+            // STORE EXISTING SEAT NUMBERS
+            // ========================================
 
             const existingNumbers =
                 new Set(
@@ -549,6 +583,10 @@ app.get(
             const totalSeats =
                 await Seat.countDocuments();
 
+
+            // ========================================
+            // RESPONSE
+            // ========================================
 
             return res.send(
                 `${newSeats.length} new seats created. Total seats: ${totalSeats}`
@@ -630,7 +668,7 @@ const PORT =
 
 
 // ========================================
-// DATABASE + SERVER START
+// CONNECT DATABASE + START SERVER
 // ========================================
 
 mongoose
@@ -668,3 +706,4 @@ mongoose
 
         }
     );
+

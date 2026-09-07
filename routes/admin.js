@@ -339,19 +339,97 @@ router.get(
 
             // ========================================
             // BOOKINGS
+            // IMPORTANT:
+            // Populate USER + SEAT
             // ========================================
 
             const bookings =
                 await Booking.find()
                     .populate({
                         path: "user",
-                        select: "-password"
+                        select: "name email phone role isVerified isEmailVerified"
                     })
-                    .populate("seat")
+                    .populate({
+                        path: "seat",
+                        select: "seatNumber"
+                    })
                     .sort({
                         createdAt: -1
                     })
                     .lean();
+
+
+            // ========================================
+            // FIX BOOKING USER DATA
+            // ========================================
+            // If populate works, booking.user already
+            // contains name/email/phone.
+            //
+            // The fallback map below also checks the
+            // complete users list using ObjectId.
+            // ========================================
+
+            const userMap = new Map();
+
+            for (
+                const user of users
+            ) {
+
+                if (
+                    user &&
+                    user._id
+                ) {
+
+                    userMap.set(
+                        user._id.toString(),
+                        user
+                    );
+                }
+            }
+
+
+            for (
+                const booking of bookings
+            ) {
+
+                if (
+                    booking.user
+                ) {
+
+                    const userId =
+                        booking.user._id
+                            ? booking.user._id.toString()
+                            : null;
+
+                    if (
+                        userId &&
+                        userMap.has(userId)
+                    ) {
+
+                        const originalUser =
+                            userMap.get(
+                                userId
+                            );
+
+                        booking.user = {
+
+                            ...originalUser,
+
+                            // Never expose password
+                            password: undefined
+
+                        };
+                    }
+
+                } else {
+
+                    // ========================================
+                    // USER DOCUMENT DOES NOT EXIST
+                    // ========================================
+
+                    booking.user = null;
+                }
+            }
 
 
             // ========================================
@@ -1085,7 +1163,7 @@ router.post(
             const user =
                 await User.findById(
                     userId
-                ).select("_id name email");
+                ).select("_id name email phone");
 
 
             if (!user) {
@@ -1410,18 +1488,12 @@ router.post(
             // ========================================
             // PAYMENT WARNING
             // ========================================
-            // IMPORTANT:
-            // This route does NOT automatically issue
-            // a Razorpay refund.
-            // ========================================
 
             if (
                 booking.paymentStatus ===
                 "paid"
             ) {
 
-                // Keep cancellation possible.
-                // Refund must be handled separately.
                 console.log(
                     `Paid booking ${booking.bookingNumber} cancelled by admin. Refund may require manual handling.`
                 );
@@ -1484,9 +1556,12 @@ router.get(
                 await Booking.find()
                     .populate({
                         path: "user",
-                        select: "-password"
+                        select: "name email phone role isVerified isEmailVerified"
                     })
-                    .populate("seat")
+                    .populate({
+                        path: "seat",
+                        select: "seatNumber"
+                    })
                     .sort({
                         createdAt: -1
                     });

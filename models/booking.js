@@ -47,10 +47,6 @@ const bookingSchema = new mongoose.Schema(
         // ========================================
         // BOOKING TYPE
         // ========================================
-        // day
-        // night
-        // fullDay
-        // ========================================
 
         bookingType: {
             type: String,
@@ -60,7 +56,8 @@ const bookingSchema = new mongoose.Schema(
                 "fullDay"
             ],
             required: true,
-            trim: true
+            trim: true,
+            index: true
         },
 
 
@@ -111,12 +108,6 @@ const bookingSchema = new mongoose.Schema(
         // ========================================
         // PRICE PER MONTH
         // ========================================
-        // Booking create hone ke time ki price
-        // yahan permanently save hogi.
-        //
-        // Future mein admin price change karega
-        // to old booking ki price change nahi hogi.
-        // ========================================
 
         pricePerMonth: {
             type: Number,
@@ -128,9 +119,6 @@ const bookingSchema = new mongoose.Schema(
         // ========================================
         // TOTAL AMOUNT
         // ========================================
-        // Razorpay mein isi amount ka payment
-        // create hoga.
-        // ========================================
 
         totalAmount: {
             type: Number,
@@ -141,10 +129,6 @@ const bookingSchema = new mongoose.Schema(
 
         // ========================================
         // PAYMENT STATUS
-        // ========================================
-        // pending = payment pending
-        // paid    = payment successful
-        // failed  = payment failed
         // ========================================
 
         paymentStatus: {
@@ -195,10 +179,6 @@ const bookingSchema = new mongoose.Schema(
         // ========================================
         // BOOKING STATUS
         // ========================================
-        // pending   = payment pending
-        // confirmed = payment successful
-        // cancelled = booking cancelled
-        // ========================================
 
         status: {
             type: String,
@@ -226,30 +206,31 @@ const bookingSchema = new mongoose.Schema(
 // ========================================
 // DATE VALIDATION
 // ========================================
+// Mongoose 9 compatible.
+//
+// IMPORTANT:
+// Yahan next() use nahi kiya gaya.
+// Validation fail hone par Error throw
+// kiya ja raha hai.
+// ========================================
 
-bookingSchema.pre("validate", function (next) {
+bookingSchema.pre("validate", function () {
 
     if (
         this.startDate &&
         this.endDate &&
         this.endDate < this.startDate
     ) {
-        return next(
-            new Error(
-                "End date cannot be before start date."
-            )
+        throw new Error(
+            "End date cannot be before start date."
         );
     }
 
-    next();
 });
 
 
 // ========================================
-// INDEX
-// ========================================
-// Overlapping confirmed bookings ko quickly
-// find karne mein MongoDB ko help karega.
+// BOOKING OVERLAP INDEX
 // ========================================
 
 bookingSchema.index({
