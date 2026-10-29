@@ -1,232 +1,361 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
 
-    <title>My Bookings - Kavika</title>
-<link rel="icon" type="image/jpeg" href="/images/kavika.jpeg" >
-    <link rel="stylesheet" href="/css/style.css">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>My Bookings - Kavika</title>
+
+<link rel="icon" type="image/jpeg" href="/images/kavika.jpeg">
+<link rel="stylesheet" href="/css/style.css">
+
 
 </head>
 
-
 <body>
 
-    <%- include("../includes/navbar.ejs") %>
 
+<%- include("../includes/navbar.ejs") %>
 
-    <main class="my-bookings-page">
+<main class="my-bookings-page">
 
-        <div class="my-bookings-container">
+    <div class="my-bookings-container">
 
+        <!-- HEADER -->
 
-            <!-- HEADER -->
+        <div class="my-bookings-header">
 
-            <div class="my-bookings-header">
+            <p class="eyebrow">
+                KAVIKA LIBRARY
+            </p>
 
-                <p class="eyebrow">
-                    KAVIKA LIBRARY
-                </p>
+            <h1>
+                My Bookings
+            </h1>
 
-                <h1>
-                    My Bookings
-                </h1>
-
-                <p>
-                    View your booked seats and manage your bookings.
-                </p>
-
-            </div>
-
-
-            <% if (bookings.length === 0) { %>
-
-
-                <!-- NO BOOKINGS -->
-
-                <div class="empty-bookings">
-
-                    <div class="empty-icon">
-                        📚
-                    </div>
-
-                    <h2>
-                        No Bookings Yet
-                    </h2>
-
-                    <p>
-                        You don't have any bookings yet.
-                        Choose a seat and start your study journey.
-                    </p>
-
-                    <a
-                        href="/bookings/new"
-                        class="btn btn-primary"
-                    >
-                        Book a Seat →
-                    </a>
-
-                </div>
-
-
-            <% } else { %>
-
-
-                <!-- BOOKINGS -->
-
-                <div class="bookings-list">
-
-
-                    <% bookings.forEach(booking => { %>
-
-
-                        <div class="booking-item">
-
-
-                            <!-- BOOKING INFO -->
-
-                            <div class="booking-info">
-
-                                <p class="booking-label">
-                                    BOOKED SEAT
-                                </p>
-
-                                <h2>
-                                    Seat <%= booking.seat.seatNumber %>
-                                </h2>
-
-
-                                <div class="booking-details">
-
-                                    <p>
-
-                                        <span>📅</span>
-
-                                        <strong>
-                                            Date
-                                        </strong>
-
-                                        <%= new Date(
-                                            booking.date
-                                        ).toLocaleDateString() %>
-
-                                    </p>
-
-
-                                    <p>
-
-                                        <span>🕐</span>
-
-                                        <strong>
-                                            Time
-                                        </strong>
-
-                                        <%= booking.startTime %>
-                                        -
-                                        <%= booking.endTime %>
-
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-
-                            <!-- RIGHT SIDE -->
-
-                            <div class="booking-actions">
-
-
-                                <!-- STATUS -->
-
-                                <div class="booking-status
-                                    <%= booking.status === 'confirmed'
-                                        ? 'confirmed'
-                                        : 'cancelled'
-                                    %>"
-                                >
-
-                                    <span class="status-dot"></span>
-
-                                    <span>
-                                        <%= booking.status %>
-                                    </span>
-
-                                </div>
-
-
-                                <!-- CANCEL BUTTON -->
-
-                                <% if (booking.status === "confirmed") { %>
-
-                                    <form
-                                        action="/bookings/<%= booking._id %>/cancel"
-                                        method="POST"
-                                        onsubmit="return confirm('Are you sure you want to cancel this booking?');"
-                                    >
-
-                                        <button
-                                            type="submit"
-                                            class="cancel-booking-btn"
-                                        >
-                                            Cancel Booking
-                                        </button>
-
-                                    </form>
-
-                                <% } else { %>
-
-                                    <span class="cancelled-text">
-                                        Booking Cancelled
-                                    </span>
-
-                                <% } %>
-
-
-                            </div>
-
-
-                        </div>
-
-
-                    <% }) %>
-
-
-                </div>
-
-
-                <!-- BOOK MORE -->
-
-                <div class="book-more">
-
-                    <a
-                        href="/bookings/new"
-                        class="btn btn-primary"
-                    >
-                        Book Another Seat →
-                    </a>
-
-                </div>
-
-
-            <% } %>
-
+            <p>
+                View your booking requests, approval status and payments.
+            </p>
 
         </div>
 
-    </main>
+        <% if (bookings.length === 0) { %>
 
+            <!-- NO BOOKINGS -->
 
-    <!-- FOOTER -->
+            <div class="empty-bookings">
 
-    <%- include("../includes/footer.ejs") %>
+                <div class="empty-icon">
+                    📚
+                </div>
+
+                <h2>
+                    No Bookings Yet
+                </h2>
+
+                <p>
+                    You don't have any bookings yet.
+                    Choose a seat and start your study journey.
+                </p>
+
+                <a
+                    href="/bookings/new"
+                    class="btn btn-primary"
+                >
+                    Book a Seat →
+                </a>
+
+            </div>
+
+        <% } else { %>
+
+            <!-- BOOKINGS -->
+
+            <div class="bookings-list">
+
+                <% bookings.forEach(booking => {
+
+                    const isRejected =
+                        booking.approvalStatus === "rejected";
+
+                    const isCancelled =
+                        booking.status === "cancelled";
+
+                    const isApproved =
+                        booking.approvalStatus === "approved" ||
+                        booking.approvalStatus === "not_required";
+
+                    const isPaid =
+                        booking.paymentStatus === "paid";
+
+                    const isConfirmed =
+                        booking.status === "confirmed";
+
+                    let statusText = "Pending";
+
+                    let statusClass = "pending";
+
+                    if (isRejected) {
+                        statusText = "Rejected";
+                        statusClass = "cancelled";
+                    } else if (isCancelled) {
+                        statusText = "Cancelled";
+                        statusClass = "cancelled";
+                    } else if (isPaid && isConfirmed) {
+                        statusText = "Confirmed";
+                        statusClass = "confirmed";
+                    } else if (isApproved && !isPaid) {
+                        statusText = "Approved — Payment Pending";
+                        statusClass = "pending";
+                    } else if (booking.approvalStatus === "pending") {
+                        statusText = "Awaiting Admin Approval";
+                        statusClass = "pending";
+                    }
+
+                    const bookingTypeLabels = {
+                        day: "Day",
+                        night: "Night",
+                        fullDay: "Full Day"
+                    };
+
+                    const bookingType =
+                        bookingTypeLabels[booking.bookingType] ||
+                        booking.bookingType ||
+                        "N/A";
+
+                    const startDate = booking.startDate
+                        ? new Date(booking.startDate)
+                        : null;
+
+                    const endDate = booking.endDate
+                        ? new Date(booking.endDate)
+                        : null;
+
+                    const formatDate = (date) => {
+                        if (!date || isNaN(date.getTime())) {
+                            return "N/A";
+                        }
+
+                        return date.toLocaleDateString("en-IN", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            timeZone: "UTC"
+                        });
+                    };
+
+                    const canPay =
+                        isApproved &&
+                        !isPaid &&
+                        !isCancelled &&
+                        !isRejected;
+
+                    const canCancel =
+                        !isCancelled &&
+                        !isRejected &&
+                        !isPaid;
+
+                %>
+
+                    <div class="booking-item">
+
+                        <!-- BOOKING INFO -->
+
+                        <div class="booking-info">
+
+                            <p class="booking-label">
+                                BOOKED SEAT
+                            </p>
+
+                            <h2>
+                                Seat
+                                <%= booking.seat
+                                    ? booking.seat.seatNumber
+                                    : "N/A"
+                                %>
+                            </h2>
+
+                            <div class="booking-details">
+
+                                <p>
+                                    <span>📅</span>
+                                    <strong>Booking Type</strong>
+                                    <%= bookingType %>
+                                </p>
+
+                                <p>
+                                    <span>📅</span>
+                                    <strong>Start Date</strong>
+                                    <%= formatDate(startDate) %>
+                                </p>
+
+                                <p>
+                                    <span>📅</span>
+                                    <strong>End Date</strong>
+                                    <%= formatDate(endDate) %>
+                                </p>
+
+                                <p>
+                                    <span>🕐</span>
+                                    <strong>Duration</strong>
+                                    <%= booking.durationDays || 0 %> days
+                                </p>
+
+                                <p>
+                                    <span>💰</span>
+                                    <strong>Total Amount</strong>
+                                    ₹<%= Number(booking.totalAmount || 0).toLocaleString("en-IN") %>
+                                </p>
+
+                                <p>
+                                    <span>💳</span>
+                                    <strong>Payment</strong>
+                                    <%= isPaid ? "Paid" : "Not Paid" %>
+                                </p>
+
+                                <p>
+                                    <span>🔖</span>
+                                    <strong>Booking Number</strong>
+                                    <%= booking.bookingNumber || booking._id %>
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <!-- RIGHT SIDE -->
+
+                        <div class="booking-actions">
+
+                            <!-- BOOKING STATUS -->
+
+                            <div class="booking-status <%= statusClass %>">
+
+                                <span class="status-dot"></span>
+
+                                <span>
+                                    <%= statusText %>
+                                </span>
+
+                            </div>
+
+                            <!-- APPROVAL STATUS -->
+
+                            <% if (booking.approvalStatus === "pending") { %>
+
+                                <p class="booking-approval-message">
+                                    Your booking request is waiting for admin approval.
+                                    Payment will be available after approval.
+                                </p>
+
+                            <% } else if (isRejected) { %>
+
+                                <p class="cancelled-text">
+                                    Your booking request was rejected.
+                                </p>
+
+                                <% if (booking.rejectionReason) { %>
+                                    <p>
+                                        Reason:
+                                        <%= booking.rejectionReason %>
+                                    </p>
+                                <% } %>
+
+                            <% } else if (isApproved && canPay) { %>
+
+                                <p class="booking-approval-message">
+                                    Your booking has been approved.
+                                    Complete payment to confirm your seat.
+                                </p>
+
+                                <!-- PAYMENT BUTTON -->
+
+                                <a
+                                    href="/bookings/confirmation/<%= booking._id %>"
+                                    class="btn btn-primary"
+                                >
+                                    Pay Now →
+                                </a>
+
+                            <% } else if (isPaid && isConfirmed) { %>
+
+                                <p class="booking-approval-message">
+                                    Payment successful. Your booking is confirmed.
+                                </p>
+
+                                <a
+                                    href="/bookings/confirmation/<%= booking._id %>"
+                                    class="btn btn-primary"
+                                >
+                                    View Confirmation
+                                </a>
+
+                            <% } %>
+
+                            <!-- CANCEL BOOKING -->
+
+                            <% if (canCancel) { %>
+
+                                <form
+                                    action="/bookings/<%= booking._id %>/cancel"
+                                    method="POST"
+                                    onsubmit="return confirm('Are you sure you want to cancel this booking?');"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="cancel-booking-btn"
+                                    >
+                                        Cancel Booking
+                                    </button>
+
+                                </form>
+
+                            <% } else if (isCancelled) { %>
+
+                                <span class="cancelled-text">
+                                    Booking Cancelled
+                                </span>
+
+                            <% } %>
+
+                        </div>
+
+                    </div>
+
+                <% }) %>
+
+            </div>
+
+            <!-- BOOK MORE -->
+
+            <div class="book-more">
+
+                <a
+                    href="/bookings/new"
+                    class="btn btn-primary"
+                >
+                    Book Another Seat →
+                </a>
+
+            </div>
+
+        <% } %>
+
+    </div>
+
+</main>
+
+<!-- FOOTER -->
+
+<%- include("../includes/footer.ejs") %>
 
 
 </body>

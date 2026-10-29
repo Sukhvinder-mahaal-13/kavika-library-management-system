@@ -1,1830 +1,420 @@
-
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
-
-<meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
-<title>Kavika - Admin Dashboard</title>
-<link rel="icon" href="images/kavika.jpeg">
-<link
-    rel="stylesheet"
-    href="/css/style.css"
->
-
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kavika - Admin Dashboard</title>
+    <link rel="icon" href="/images/kavika.jpeg">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .admin-container{width:min(1400px,94%);margin:35px auto}
+        .admin-header{margin-bottom:30px}
+        .admin-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:18px;margin:25px 0 40px}
+        .admin-stat-card,.admin-section,.admin-price-card,.home-image-admin-card,.admin-seat-card{padding:22px;border-radius:14px;border:1px solid rgba(128,128,128,.25);margin-bottom:20px}
+        .admin-stat-card{display:flex;align-items:center;gap:15px}
+        .admin-stat-icon{font-size:30px}
+        .admin-stat-card h3{margin:0 0 8px}
+        .admin-stat-card p{font-size:25px;font-weight:700;margin:0}
+        .admin-section{margin:35px 0;overflow:hidden}
+        .section-heading,.admin-section-header{margin-bottom:24px}
+        .eyebrow{font-size:12px;letter-spacing:2px;font-weight:700;opacity:.75}
+        .admin-table-wrapper{width:100%;overflow-x:auto}
+        .admin-table{width:100%;min-width:900px;border-collapse:collapse}
+        .admin-table th,.admin-table td{padding:13px;text-align:left;border-bottom:1px solid rgba(128,128,128,.25);vertical-align:top}
+        .admin-table th{white-space:nowrap}
+        .admin-status,.seat-badge{display:inline-block;padding:6px 10px;border-radius:20px;background:rgba(128,128,128,.15);font-size:12px;font-weight:700;white-space:nowrap}
+        .admin-status.confirmed,.status-paid{color:#16a34a}
+        .admin-status.cancelled,.status-rejected{color:#dc2626}
+        .status-pending{color:#d97706}
+        .admin-form,.pricing-admin-grid,.home-images-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+        .admin-form-group{display:flex;flex-direction:column;gap:8px;min-width:0}
+        .admin-form input,.admin-form select,.admin-form textarea,.admin-price-card input,.home-image-form input{width:100%;box-sizing:border-box;padding:11px;border-radius:8px;border:1px solid #aaa;font:inherit}
+        .admin-form button,.admin-price-card button,.home-image-admin-card button,.admin-table button,.admin-gallery-link{cursor:pointer}
+        .admin-assign-btn,.admin-table button,.admin-price-card button,.home-image-admin-card button{border:none;border-radius:8px;padding:10px 14px;font-weight:700}
+        .admin-assign-btn{align-self:end}
+        .admin-approve-btn{background:#16a34a;color:#fff}
+        .admin-reject-btn,.admin-cancel-btn,.home-image-delete-btn{background:#dc2626;color:#fff}
+        .admin-pay-btn,.home-image-update-btn{background:#2563eb;color:#fff}
+        .admin-actions{display:flex;flex-wrap:wrap;gap:8px}
+        .admin-actions form{margin:0}
+        .admin-gallery-link{display:flex;align-items:center;gap:15px;padding:18px;border:1px solid rgba(128,128,128,.25);border-radius:12px;text-decoration:none}
+        .admin-gallery-icon{font-size:30px}
+        .admin-gallery-link>span:last-child{margin-left:auto}
+        .home-image-admin-preview{height:190px;overflow:hidden;border-radius:10px;margin-bottom:15px;background:rgba(128,128,128,.1);display:flex;align-items:center;justify-content:center}
+        .home-image-admin-preview img{width:100%;height:100%;object-fit:cover}
+        .home-image-form{display:grid;gap:12px;margin:15px 0}
+        .admin-empty{padding:25px;text-align:center;opacity:.75}
+        .admin-seat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+        .admin-seat-card{margin:0;text-align:center}
+        .admin-seat-number{font-weight:700;margin-bottom:12px}
+        .admin-seat-status{font-weight:700}
+        .payment-details{min-width:150px;line-height:1.8}
+        .admin-price-card form{display:grid;gap:12px}
+        .admin-price-card button{background:#2563eb;color:#fff}
+        .admin-help-text{font-size:13px;opacity:.75}
+        /* Booking price calculator */
+        .booking-calculator{padding:24px;border-radius:16px;border:1px solid rgba(128,128,128,.3);background:rgba(128,128,128,.06);width:100%;box-sizing:border-box}
+        .booking-calculator-header{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+        .calculator-icon{font-size:34px}
+        .booking-calculator-header h3{margin:0 0 6px;font-size:21px}
+        .booking-calculator-header p{margin:0;font-size:13px;opacity:.75}
+        .calculator-grid,.calculator-payment-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+        .calculator-item,.calculator-payment-item{display:flex;flex-direction:column;gap:8px;padding:16px;border:1px solid rgba(128,128,128,.2);border-radius:10px;background:rgba(128,128,128,.04);overflow-wrap:anywhere}
+        .calculator-item span,.calculator-payment-item span{font-size:13px;opacity:.75}
+        .calculator-item strong,.calculator-payment-item strong{font-size:18px}
+        .calculator-total{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin:22px 0;padding:20px;border-radius:12px;background:rgba(22,163,74,.1);border:1px solid rgba(22,163,74,.3)}
+        .calculator-total span{font-weight:600}
+        .calculator-total strong{font-size:28px;color:#16a34a}
+        .calculator-payment-grid{margin-top:14px}
+        #amountReceivedDisplay{color:#16a34a}
+        #remainingBalanceDisplay{color:#d97706}
+        .calculator-message{margin:18px 0 0;font-size:14px;font-weight:600}
+        .calculator-message.error{color:#dc2626}
+        @media(max-width:600px){.admin-container{width:94%;margin:20px auto}.admin-section,.admin-stat-card{padding:15px}.admin-table{min-width:850px}.booking-calculator{padding:16px}.booking-calculator-header h3{font-size:18px}.calculator-total strong{font-size:24px}}
+    </style>
 </head>
-
 <body>
+    <%- include("../includes/navbar.ejs") %>
+    <main class="admin-container">
+        <section class="admin-header">
+            <p class="eyebrow">KAVIKA LIBRARY</p><h1>👑 Admin Dashboard</h1>
+            <p>Welcome yadav ji. Manage bookings, users, seats, pricing and library content.</p>
+        </section>
 
+        <!-- STATISTICS -->
+        <section class="admin-stats">
+            <div class="admin-stat-card"><div class="admin-stat-icon">👥</div><div><h3>Total Users</h3><p><%= typeof users !== "undefined" ? users.length : 0 %></p></div></div>
+            <div class="admin-stat-card"><div class="admin-stat-icon">💺</div><div><h3>Total Seats</h3><p><%= typeof seats !== "undefined" ? seats.length : 0 %></p></div></div>
+            <div class="admin-stat-card"><div class="admin-stat-icon">📋</div><div><h3>Total Bookings</h3><p><%= typeof bookings !== "undefined" ? bookings.length : 0 %></p></div></div>
+            <div class="admin-stat-card"><div class="admin-stat-icon">🟢</div><div><h3>Confirmed</h3><p><%= typeof activeBookings !== "undefined" ? activeBookings : 0 %></p></div></div>
+            <div class="admin-stat-card"><div class="admin-stat-icon">❌</div><div><h3>Cancelled</h3><p><%= typeof cancelledBookings !== "undefined" ? cancelledBookings : 0 %></p></div></div>
+        </section>
 
-<!-- ========================================
-     NAVBAR
-======================================== -->
-
-<%- include("../includes/navbar.ejs") %>
-
-
-
-<!-- ========================================
-     ADMIN MAIN
-======================================== -->
-
-<main class="admin-container">
-
-
-    <!-- ========================================
-         HEADER
-    ======================================== -->
-
-    <section class="admin-header">
-
-        <p class="eyebrow">
-            KAVIKA LIBRARY
-        </p>
-
-        <h1>
-            👑 Admin Dashboard
-        </h1>
-
-        <p>
-            Welcome yadav ji. Manage Kavika Library from here.
-        </p>
-
-    </section>
-
-
-
-    <!-- ========================================
-         STATISTICS
-    ======================================== -->
-
-    <section class="admin-stats">
-
-
-        <!-- TOTAL USERS -->
-
-        <div class="admin-stat-card">
-
-            <div class="admin-stat-icon">
-                👥
+        <!-- QUICK LINKS -->
+        <section class="admin-section">
+            <div class="admin-section-header"><p class="eyebrow">QUICK MANAGEMENT</p><h2>Library Management</h2></div>
+            <div class="admin-stats">
+                <a href="/gallery/admin" class="admin-gallery-link"><div class="admin-gallery-icon">🖼️</div><div><h3>Gallery Management</h3><p>Upload and manage gallery photos.</p></div><span>→</span></a>
+                <a href="/notes/admin" class="admin-gallery-link"><div class="admin-gallery-icon">📚</div><div><h3>Notes Management</h3><p>Manage library PDF notes.</p></div><span>→</span></a>
             </div>
+        </section>
 
-            <div>
-
-                <h3>
-                    Total Users
-                </h3>
-
-                <p>
-                    <%= typeof users !== "undefined"
-                        ? users.length
-                        : 0
-                    %>
-                </p>
-
+        <!-- PRICING MANAGEMENT -->
+        <section class="admin-section">
+            <div class="section-heading"><p class="eyebrow">PRICING MANAGEMENT</p><h2>Library Prices</h2><p>Update the price for each booking type.</p></div>
+            <div class="pricing-admin-grid">
+                <div class="admin-price-card"><h3>☀️ Day Plan</h3><p>Current Price: ₹<%= pricing.day %></p><form action="/admin/pricing" method="POST"><input type="hidden" name="type" value="day"><label for="dayPrice">New Day Price</label><input id="dayPrice" type="number" name="price" value="<%= pricing.day %>" min="1" required><button type="submit">Update Day Price</button></form></div>
+                <div class="admin-price-card"><h3>🌙 Night Plan</h3><p>Current Price: ₹<%= pricing.night %></p><form action="/admin/pricing" method="POST"><input type="hidden" name="type" value="night"><label for="nightPrice">New Night Price</label><input id="nightPrice" type="number" name="price" value="<%= pricing.night %>" min="1" required><button type="submit">Update Night Price</button></form></div>
+                <div class="admin-price-card"><h3>⭐ Full Day + Night</h3><p>Current Price: ₹<%= pricing.fullDay %></p><form action="/admin/pricing" method="POST"><input type="hidden" name="type" value="fullDay"><label for="fullDayPrice">New Full Day Price</label><input id="fullDayPrice" type="number" name="price" value="<%= pricing.fullDay %>" min="1" required><button type="submit">Update Full Day Price</button></form></div>
             </div>
-
-        </div>
-
-
-
-        <!-- TOTAL SEATS -->
-
-        <div class="admin-stat-card">
-
-            <div class="admin-stat-icon">
-                💺
-            </div>
-
-            <div>
-
-                <h3>
-                    Total Seats
-                </h3>
-
-                <p>
-                    <%= typeof seats !== "undefined"
-                        ? seats.length
-                        : 0
-                    %>
-                </p>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- TOTAL BOOKINGS -->
-
-        <div class="admin-stat-card">
-
-            <div class="admin-stat-icon">
-                📋
-            </div>
-
-            <div>
-
-                <h3>
-                    Total Bookings
-                </h3>
-
-                <p>
-                    <%= typeof bookings !== "undefined"
-                        ? bookings.length
-                        : 0
-                    %>
-                </p>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- ACTIVE BOOKINGS -->
-
-        <div class="admin-stat-card">
-
-            <div class="admin-stat-icon">
-                🟢
-            </div>
-
-            <div>
-
-                <h3>
-                    Active Bookings
-                </h3>
-
-                <p>
-                    <%= typeof activeBookings !== "undefined"
-                        ? activeBookings
-                        : 0
-                    %>
-                </p>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- CANCELLED -->
-
-        <div class="admin-stat-card">
-
-            <div class="admin-stat-icon">
-                ❌
-            </div>
-
-            <div>
-
-                <h3>
-                    Cancelled
-                </h3>
-
-                <p>
-                    <%= typeof cancelledBookings !== "undefined"
-                        ? cancelledBookings
-                        : 0
-                    %>
-                </p>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- GALLERY MANAGEMENT -->
-
-        <a
-            href="/gallery/admin"
-            class="admin-gallery-link"
-        >
-
-            <div class="admin-gallery-icon">
-                🖼️
-            </div>
-
-            <div>
-
-                <h3>
-                    Gallery Management
-                </h3>
-
-                <p>
-                    Upload, view and delete gallery photos.
-                </p>
-
-            </div>
-
-            <span>
-                →
-            </span>
-
-        </a>
-
-
-           
-
-            <div>
-
-              
-
-        </a>
-
-
-    </section>
-
-
-
-    <!-- ========================================
-         PRICING MANAGEMENT
-    ======================================== -->
-
-    <section class="admin-section">
-
-
-        <div class="section-heading">
-
-            <p class="eyebrow">
-                PRICING MANAGEMENT
-            </p>
-
-            <h2>
-                Library Prices
-            </h2>
-
-            <p>
-                Admin yahan se library ke plans ki price
-                update kar sakta hai.
-            </p>
-
-        </div>
-
-
-        <div class="pricing-admin-grid">
-
-
-            <!-- DAY PLAN -->
-
-            <div class="admin-price-card">
-
-                <h3>
-                    ☀️ Day Plan
-                </h3>
-
-                <p>
-                    Current Price:
-                    ₹<%= pricing.day %>
-                </p>
-
-
-                <form
-                    action="/admin/pricing"
-                    method="POST"
-                >
-
-                    <input
-                        type="hidden"
-                        name="type"
-                        value="day"
-                    >
-
-                    <input
-                        type="number"
-                        name="price"
-                        value="<%= pricing.day %>"
-                        min="0"
-                        required
-                    >
-
-                    <button type="submit">
-                        Update Day Price
-                    </button>
-
-                </form>
-
-            </div>
-
-
-
-            <!-- NIGHT PLAN -->
-
-            <div class="admin-price-card">
-
-                <h3>
-                    🌙 Night Plan
-                </h3>
-
-                <p>
-                    Current Price:
-                    ₹<%= pricing.night %>
-                </p>
-
-
-                <form
-                    action="/admin/pricing"
-                    method="POST"
-                >
-
-                    <input
-                        type="hidden"
-                        name="type"
-                        value="night"
-                    >
-
-                    <input
-                        type="number"
-                        name="price"
-                        value="<%= pricing.night %>"
-                        min="0"
-                        required
-                    >
-
-                    <button type="submit">
-                        Update Night Price
-                    </button>
-
-                </form>
-
-            </div>
-
-
-
-            <!-- FULL DAY PLAN -->
-
-            <div class="admin-price-card">
-
-                <h3>
-                    ⭐ Full Day + Night
-                </h3>
-
-                <p>
-                    Current Price:
-                    ₹<%= pricing.fullDay %>
-                </p>
-
-
-                <form
-                    action="/admin/pricing"
-                    method="POST"
-                >
-
-                    <input
-                        type="hidden"
-                        name="type"
-                        value="fullDay"
-                    >
-
-                    <input
-                        type="number"
-                        name="price"
-                        value="<%= pricing.fullDay %>"
-                        min="0"
-                        required
-                    >
-
-                    <button type="submit">
-                        Update Full Day Price
-                    </button>
-
-                </form>
-
-            </div>
-
-
-        </div>
-
-    </section>
-
-
-
-    <!-- ========================================
-         HOME PAGE IMAGE MANAGEMENT
-    ======================================== -->
-
-    <section class="admin-section home-images-admin">
-
-
-        <div class="admin-section-header">
-
-            <p class="eyebrow">
-                HOME PAGE MANAGEMENT
-            </p>
-
-            <h2>
-                🏠 Home Page Images
-            </h2>
-
-            <p>
-                Change the images displayed on your home page anytime.
-            </p>
-
-        </div>
-
-
-
-        <div class="home-images-grid">
-
-
-            <!-- ==================================
-                 HERO IMAGE
-            =================================== -->
-
-            <div class="home-image-admin-card">
-
-
-                <div class="home-image-admin-preview">
-
-
-                    <%
-                        const heroImage =
-                            homeImages &&
-                            homeImages.find(
-                                img => img.type === "hero"
-                            );
-                    %>
-
-
-                    <% if (heroImage) { %>
-
-                        <img
-                            src="<%= heroImage.image %>"
-                            alt="Home Hero Image"
-                        >
-
-                    <% } else { %>
-
-                        <div class="no-home-image">
-
-                            <span>
-                                🖼️
-                            </span>
-
-                            <p>
-                                No Hero Image
-                            </p>
-
-                        </div>
-
-                    <% } %>
-
-
-                </div>
-
-
-
-                <div class="home-image-admin-content">
-
-
-                    <span class="home-image-label">
-                        HERO IMAGE
-                    </span>
-
-
-                    <h3>
-                        Main Home Image
-                    </h3>
-
-
-                    <p>
-                        This image appears in the main hero section of the home page.
-                    </p>
-
-
-
-                    <!-- UPDATE HERO -->
-
-                    <form
-                        action="/admin/home-image"
-                        method="POST"
-                        enctype="multipart/form-data"
-                        class="home-image-form"
-                    >
-
-                        <input
-                            type="hidden"
-                            name="type"
-                            value="hero"
-                        >
-
-
-                        <label>
-                            Choose New Image
-                        </label>
-
-
-                        <input
-                            type="file"
-                            name="image"
-                            accept="image/*"
-                            required
-                        >
-
-
-                        <button
-                            type="submit"
-                            class="home-image-update-btn"
-                        >
-                            🔄 Update Hero Image
-                        </button>
-
+        </section>
+
+        <!-- HOME PAGE IMAGE MANAGEMENT -->
+        <section class="admin-section">
+            <div class="admin-section-header"><p class="eyebrow">HOME PAGE MANAGEMENT</p><h2>🏠 Home Page Images</h2><p>Update the Hero and About section images.</p></div>
+            <div class="home-images-grid">
+                <% const heroImage = Array.isArray(homeImages) ? homeImages.find(img => img.type === "hero") : null; %>
+                <div class="home-image-admin-card">
+                    <div class="home-image-admin-preview"><% if (heroImage) { %><img src="<%= heroImage.image %>" alt="Home Hero Image"><% } else { %><div>No Hero Image</div><% } %></div>
+                    <h3>Main Home Image</h3><p>This image appears in the home page hero section.</p>
+                    <form action="/admin/home-image" method="POST" enctype="multipart/form-data" class="home-image-form">
+                        <input type="hidden" name="type" value="hero"><label for="heroImageUpload">Choose Hero Image</label>
+                        <input id="heroImageUpload" type="file" name="image" accept="image/jpeg,image/png,image/webp,image/gif" required>
+                        <button type="submit" class="home-image-update-btn">Update Hero Image</button>
                     </form>
-
-
-
-                    <!-- DELETE HERO -->
-
-                    <% if (heroImage) { %>
-
-                        <form
-                            action="/admin/home-image/delete/hero"
-                            method="POST"
-                            onsubmit="return confirm('Are you sure you want to delete the Hero Image?');"
-                        >
-
-                            <button
-                                type="submit"
-                                class="home-image-delete-btn"
-                            >
-                                🗑️ Delete Hero Image
-                            </button>
-
-                        </form>
-
-                    <% } %>
-
-
+                    <% if (heroImage) { %><form action="/admin/home-image/delete/hero" method="POST" onsubmit="return confirm('Delete the Hero Image?');"><button type="submit" class="home-image-delete-btn">Delete Hero Image</button></form><% } %>
                 </div>
-
-
-            </div>
-
-
-
-            <!-- ==================================
-                 ABOUT IMAGE
-            =================================== -->
-
-            <div class="home-image-admin-card">
-
-
-                <div class="home-image-admin-preview">
-
-
-                    <%
-                        const aboutImage =
-                            homeImages &&
-                            homeImages.find(
-                                img => img.type === "about"
-                            );
-                    %>
-
-
-                    <% if (aboutImage) { %>
-
-                        <img
-                            src="<%= aboutImage.image %>"
-                            alt="About Section Image"
-                        >
-
-                    <% } else { %>
-
-                        <div class="no-home-image">
-
-                            <span>
-                                🖼️
-                            </span>
-
-                            <p>
-                                No About Image
-                            </p>
-
-                        </div>
-
-                    <% } %>
-
-
-                </div>
-
-
-
-                <div class="home-image-admin-content">
-
-
-                    <span class="home-image-label">
-                        ABOUT IMAGE
-                    </span>
-
-
-                    <h3>
-                        About Section Image
-                    </h3>
-
-
-                    <p>
-                        This image appears in the About section of the home page.
-                    </p>
-
-
-
-                    <!-- UPDATE ABOUT -->
-
-                    <form
-                        action="/admin/home-image"
-                        method="POST"
-                        enctype="multipart/form-data"
-                        class="home-image-form"
-                    >
-
-                        <input
-                            type="hidden"
-                            name="type"
-                            value="about"
-                        >
-
-
-                        <label>
-                            Choose New Image
-                        </label>
-
-
-                        <input
-                            type="file"
-                            name="image"
-                            accept="image/*"
-                            required
-                        >
-
-
-                        <button
-                            type="submit"
-                            class="home-image-update-btn"
-                        >
-                            🔄 Update About Image
-                        </button>
-
+                <% const aboutImage = Array.isArray(homeImages) ? homeImages.find(img => img.type === "about") : null; %>
+                <div class="home-image-admin-card">
+                    <div class="home-image-admin-preview"><% if (aboutImage) { %><img src="<%= aboutImage.image %>" alt="About Section Image"><% } else { %><div>No About Image</div><% } %></div>
+                    <h3>About Section Image</h3><p>This image appears in the About section.</p>
+                    <form action="/admin/home-image" method="POST" enctype="multipart/form-data" class="home-image-form">
+                        <input type="hidden" name="type" value="about"><label for="aboutImageUpload">Choose About Image</label>
+                        <input id="aboutImageUpload" type="file" name="image" accept="image/jpeg,image/png,image/webp,image/gif" required>
+                        <button type="submit" class="home-image-update-btn">Update About Image</button>
                     </form>
+                    <% if (aboutImage) { %><form action="/admin/home-image/delete/about" method="POST" onsubmit="return confirm('Delete the About Image?');"><button type="submit" class="home-image-delete-btn">Delete About Image</button></form><% } %>
+                </div>
+            </div>
+        </section>
 
+        <!-- GALLERY UPLOAD -->
+        <section class="admin-section">
+            <div class="admin-section-header"><p class="eyebrow">GALLERY MANAGEMENT</p><h2>🖼️ Add Gallery Photo</h2><p>Upload a photo with a title.</p></div>
+            <form action="/gallery/admin/upload" method="POST" enctype="multipart/form-data" class="admin-form">
+                <div class="admin-form-group"><label for="galleryTitle">Photo Title</label><input id="galleryTitle" type="text" name="title" placeholder="Enter photo title" required></div>
+                <div class="admin-form-group"><label for="galleryImage">Choose Image</label><input id="galleryImage" type="file" name="image" accept="image/jpeg,image/png,image/webp,image/gif" required></div>
+                <button type="submit" class="admin-assign-btn">Post Photo</button>
+            </form>
+        </section>
 
+        <!-- ASSIGN SEAT -->
+        <section class="admin-section">
+            <div class="admin-section-header"><p class="eyebrow">ADMIN CONTROL</p><h2>💺 Assign Seat to User</h2><p>Admin can assign a seat manually. Payment will remain unpaid unless you explicitly mark it as paid.</p></div>
+            <form action="/admin/bookings/assign" method="POST" class="admin-form" id="assignSeatForm">
+                <div class="admin-form-group"><label for="userId">Select User</label><select id="userId" name="userId" required><option value="">-- Select User --</option><% if (users && users.length > 0) { %><% users.forEach(user => { %><option value="<%= user._id %>"><%= user.name || "Unknown" %> - <%= user.phone || "No Mobile" %> - <%= user.email || "" %></option><% }) %><% } %></select></div>
+                <div class="admin-form-group"><label for="seatId">Select Seat</label><select id="seatId" name="seatId" required><option value="">-- Select Seat --</option><% if (seats && seats.length > 0) { %><% seats.forEach(seat => { %><option value="<%= seat._id %>">Seat <%= seat.seatNumber %></option><% }) %><% } %></select></div>
+                <div class="admin-form-group"><label for="bookingType">Booking Type</label><select id="bookingType" name="bookingType" required><option value="day">Day</option><option value="night">Night</option><option value="fullDay" selected>Full Day + Night</option></select></div>
+                <div class="admin-form-group"><label for="startDate">Start Date</label><input type="date" id="startDate" name="startDate" min="<%= new Date().toISOString().split('T')[0] %>" required></div>
+                <div class="admin-form-group"><label for="endDate">End Date</label><input type="date" id="endDate" name="endDate" min="<%= new Date().toISOString().split('T')[0] %>" required></div>
 
-                    <!-- DELETE ABOUT -->
-
-                    <% if (aboutImage) { %>
-
-                        <form
-                            action="/admin/home-image/delete/about"
-                            method="POST"
-                            onsubmit="return confirm('Are you sure you want to delete the About Image?');"
-                        >
-
-                            <button
-                                type="submit"
-                                class="home-image-delete-btn"
-                            >
-                                🗑️ Delete About Image
-                            </button>
-
-                        </form>
-
-                    <% } %>
-
-
+                <!-- AUTOMATIC PRICE CALCULATOR -->
+                <div class="admin-form-group" style="grid-column:1 / -1">
+                    <div class="booking-calculator">
+                        <div class="booking-calculator-header"><span class="calculator-icon">💰</span><div><h3>Booking Price Calculator</h3><p>Booking ki estimated cost automatically calculate hogi.</p></div></div>
+                        <div class="calculator-grid">
+                            <div class="calculator-item"><span>Booking Type</span><strong id="calculatorBookingType">Full Day + Night</strong></div>
+                            <div class="calculator-item"><span>Booking Duration</span><strong id="bookingDuration">Select dates</strong></div>
+                            <div class="calculator-item"><span>Price Per Day</span><strong id="pricePerDay">₹0</strong></div>
+                        </div>
+                        <div class="calculator-total"><span>Total Booking Amount</span><strong id="bookingTotalDisplay">₹0</strong></div>
+                        <div class="calculator-payment-grid">
+                            <div class="calculator-payment-item"><span>Amount Received</span><strong id="amountReceivedDisplay">₹0</strong></div>
+                            <div class="calculator-payment-item"><span>Remaining Balance</span><strong id="remainingBalanceDisplay">₹0</strong></div>
+                        </div>
+                        <p id="calculatorMessage" class="calculator-message">Start Date aur End Date select karo.</p>
+                        <p class="admin-help-text">Calculation saved admin pricing aur selected dates ke according hogi.</p>
+                    </div>
                 </div>
 
+                <div class="admin-form-group"><label for="paymentStatus">Payment Status</label><select id="paymentStatus" name="paymentStatus" required><option value="pending" selected>Unpaid / Pending</option><option value="paid">Paid in Full</option></select><p class="admin-help-text">Choose Paid only after receiving the full amount.</p></div>
+                <div class="admin-form-group"><label for="paymentMethod">Payment Method</label><select id="paymentMethod" name="paymentMethod"><option value="">-- Select if Paid --</option><option value="cash">Cash</option><option value="upi">UPI</option><option value="bank_transfer">Bank Transfer</option><option value="complimentary">Complimentary / Free</option><option value="other">Other</option></select></div>
+                <div class="admin-form-group"><label for="amountPaid">Amount Received (₹)</label><input type="number" id="amountPaid" name="amountPaid" min="0" step="0.01" value="0"></div>
+                <div class="admin-form-group"><label for="paymentReceivedAt">Payment Received Date</label><input type="date" id="paymentReceivedAt" name="paymentReceivedAt"></div>
+                <div class="admin-form-group"><label for="paymentReference">Payment Reference</label><input type="text" id="paymentReference" name="paymentReference" placeholder="Transaction ID (optional)"></div>
+                <div class="admin-form-group"><label for="paymentNotes">Payment Notes</label><textarea id="paymentNotes" name="paymentNotes" rows="3" placeholder="Optional notes"></textarea></div>
+                <button type="submit" class="admin-assign-btn">Assign Seat</button>
+            </form>
+        </section>
 
+        <!-- ALL USERS -->
+        <section class="admin-section">
+            <div class="admin-section-header"><p class="eyebrow">USER MANAGEMENT</p><h2>👥 All Registered Users</h2></div>
+            <% if (!users || users.length === 0) { %><div class="admin-empty">No users found.</div><% } else { %>
+            <div class="admin-table-wrapper"><table class="admin-table">
+                <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Mobile</th><th>Role</th><th>Bookings</th></tr></thead>
+                <tbody><% users.forEach((user,index)=>{ %>
+                    <% const userBookings=(bookings||[]).filter(booking=>{const bookingUserId=booking.user&&booking.user._id?booking.user._id.toString():booking.user?booking.user.toString():"";return bookingUserId===user._id.toString();}); %>
+                    <tr><td><%= index+1 %></td><td><strong><%= user.name||"Unknown" %></strong></td><td><%= user.email||"-" %></td><td><%= user.phone||"-" %></td><td><% if(user.role==="admin"){ %><span class="admin-status confirmed">Admin</span><% }else{ %><span class="admin-status">Student</span><% } %></td><td><%= userBookings.length %></td></tr>
+                <% }) %></tbody>
+            </table></div><% } %>
+        </section>
+
+        <!-- ALL BOOKINGS -->
+        <section class="admin-section">
+            <div class="admin-section-header"><p class="eyebrow">BOOKING MANAGEMENT</p><h2>📋 All Bookings</h2><p>Review booking requests, approval status, payment status and seat assignments.</p></div>
+            <div class="booking-archive-tools" style="display:grid;gap:14px;margin:0 0 22px;padding:18px;border:1px solid rgba(128,128,128,.3);border-radius:12px;background:rgba(128,128,128,.06);">
+                <div><h3 style="margin:0 0 8px;">📦 Export &amp; Clear Booking Records</h3><p class="admin-help-text" style="margin:0;">Pehle sabhi bookings ki PDF download karke check/save kar lo. PDF download hone se browser ye verify nahi kar sakta ki file aapne sahi jagah save kar li hai.</p></div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+                    <a href="/admin/bookings/export-pdf" class="admin-assign-btn" style="display:inline-block;text-decoration:none;padding:12px 16px;border-radius:8px;background:#2563eb;color:#fff;font-weight:700;">📥 Download All Bookings PDF</a>
+                    <form action="/admin/bookings/delete-all" method="POST" onsubmit="return confirmDeleteAllBookings(this);" style="margin:0;">
+                        <input type="hidden" name="confirmDelete" value="">
+                        <button type="submit" class="admin-cancel-btn" style="border:0;border-radius:8px;padding:12px 16px;font-weight:700;cursor:pointer;">🗑️ Delete All Booking Records</button>
+                    </form>
+                </div>
+                <p class="admin-help-text" style="margin:0;color:#dc2626;">Warning: deletion permanent hai. Isse current/future bookings bhi delete ho jayengi aur seats available dikh sakti hain. Registered user accounts aur seat records delete nahi honge.</p>
             </div>
-
-
-        </div>
-
-
-    </section>
-
-<!-- 
-
-    <!-- ========================================
-         GALLERY MANAGEMENT
-    ======================================== -->
-
-    <section class="admin-section">
-
-
-        <div class="admin-section-header">
-
-            <p class="eyebrow">
-                GALLERY MANAGEMENT
-            </p>
-
-            <h2>
-                🖼️ Add Gallery Photo
-            </h2>
-
-            <p>
-                Upload a photo with a title to display it in the gallery.
-            </p>
-
-        </div>
-
-
-
-        <form
-            action="/gallery/admin/upload"
-            method="POST"
-            enctype="multipart/form-data"
-            class="gallery-upload-form"
-        >
-
-
-            <!-- TITLE -->
-
-            <div class="admin-form-group">
-
-                <label for="galleryTitle">
-                    Photo Title
-                </label>
-
-                <input
-                    type="text"
-                    id="galleryTitle"
-                    name="title"
-                    placeholder="Enter photo title"
-                    required
-                >
-
-            </div>
-
-
-
-            <!-- IMAGE -->
-
-            <div class="admin-form-group">
-
-                <label for="galleryImage">
-                    Choose Image
-                </label>
-
-                <input
-                    type="file"
-                    id="galleryImage"
-                    name="image"
-                    accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
-                    required
-                >
-
-            </div>
-
-
-
-            <!-- POST -->
-
-            <button
-                type="submit"
-                class="admin-assign-btn"
-            >
-                🖼️ Post Photo
-            </button>
-
-
-        </form>
-
-
-    </section>
-
-
-
-    <!-- ========================================
-         NOTES MANAGEMENT
-    ======================================== -->
-
-    <section class="admin-section">
-
-
-        <div class="admin-section-header">
-
-            <p class="eyebrow">
-                NOTES MANAGEMENT
-            </p>
-
-            <h2>
-                📚 Library Notes
-            </h2>
-
-            <p>
-                Upload, view and delete library notes in PDF format.
-            </p>
-
-        </div>
-
-
-
-        <a
-            href="/notes/admin"
-            class="admin-gallery-link"
-        >
-
-            <div class="admin-gallery-icon">
-                📚
-            </div>
-
-            <div>
-
-                <h3>
-                    Open Notes Management
-                </h3>
-
-                <p>
-                    Upload new PDF notes, view existing notes and delete notes.
-                </p>
-
-            </div>
-
-            <span>
-                →
-            </span>
-
-        </a>
-
-
-    </section>
- 
-
-
-    <!-- ========================================
-         ASSIGN SEAT
-    ======================================== -->
-
-    <section class="admin-section">
-
-
-        <div class="admin-section-header">
-
-            <p class="eyebrow">
-                ADMIN CONTROL
-            </p>
-
-            <h2>
-                💺 Assign Seat to User
-            </h2>
-
-            <p>
-                Admin can assign a seat to any registered user.
-            </p>
-
-        </div>
-
-
-
-        <form
-            action="/admin/bookings/assign"
-            method="POST"
-            class="admin-form"
-        >
-
-
-            <!-- USER -->
-
-            <div class="admin-form-group">
-
-                <label for="userId">
-                    Select User
-                </label>
-
-                <select
-                    id="userId"
-                    name="userId"
-                    required
-                >
-
-                    <option value="">
-                        -- Select User --
-                    </option>
-
-
-                    <% if (users && users.length > 0) { %>
-
-                        <% users.forEach(user => { %>
-
-                            <option
-                                value="<%= user._id %>"
-                            >
-
-                                <%= user.name %>
-                                -
-                                <%= user.phone || "No Mobile" %>
-                                -
-                                <%= user.email %>
-
-                            </option>
-
-                        <% }) %>
-
-                    <% } else { %>
-
-                        <option value="">
-                            No users found
-                        </option>
-
-                    <% } %>
-
-
-                </select>
-
-            </div>
-
-
-
-            <!-- SEAT -->
-
-            <div class="admin-form-group">
-
-                <label for="seatId">
-                    Select Seat
-                </label>
-
-                <select
-                    id="seatId"
-                    name="seatId"
-                    required
-                >
-
-                    <option value="">
-                        -- Select Seat --
-                    </option>
-
-
-                    <% if (seats && seats.length > 0) { %>
-
-                        <% seats.forEach(seat => { %>
-
-                            <option
-                                value="<%= seat._id %>"
-                            >
-
-                                Seat <%= seat.seatNumber %>
-
-                            </option>
-
-                        <% }) %>
-
-                    <% } else { %>
-
-                        <option value="">
-                            No seats found
-                        </option>
-
-                    <% } %>
-
-
-                </select>
-
-            </div>
-
-
-
-            <!-- START DATE -->
-
-            <div class="admin-form-group">
-
-                <label for="startDate">
-                    Start Date
-                </label>
-
-                <input
-                    type="date"
-                    id="startDate"
-                    name="startDate"
-                    min="<%= new Date().toISOString().split('T')[0] %>"
-                    required
-                >
-
-            </div>
-
-
-
-            <!-- END DATE -->
-
-            <div class="admin-form-group">
-
-                <label for="endDate">
-                    End Date
-                </label>
-
-                <input
-                    type="date"
-                    id="endDate"
-                    name="endDate"
-                    min="<%= new Date().toISOString().split('T')[0] %>"
-                    required
-                >
-
-            </div>
-
-
-
-            <!-- BUTTON -->
-
-            <button
-                type="submit"
-                class="admin-assign-btn"
-            >
-                ✅ Assign Seat
-            </button>
-
-
-        </form>
-
-
-    </section>
-
-
-
-    <!-- ========================================
-         ALL USERS
-    ======================================== -->
-
-    <section class="admin-section">
-
-
-        <div class="admin-section-header">
-
-            <p class="eyebrow">
-                USER MANAGEMENT
-            </p>
-
-            <h2>
-                👥 All Registered Users
-            </h2>
-
-            <p>
-                View all users registered on Kavika Library.
-            </p>
-
-        </div>
-
-
-        <% if (!users || users.length === 0) { %>
-
-
-            <div class="admin-empty">
-                No users found.
-            </div>
-
-
-        <% } else { %>
-
-
-            <div class="admin-table-wrapper">
-
-                <table class="admin-table">
-
-
-                    <thead>
-
-                        <tr>
-
-                            <th>
-                                #
-                            </th>
-
-                            <th>
-                                Name
-                            </th>
-
-                            <th>
-                                Email
-                            </th>
-
-                            <th>
-                                Mobile Number
-                            </th>
-
-                            <th>
-                                Role
-                            </th>
-
-                            <th>
-                                Booking
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-
-                    <tbody>
-
-
-                        <% users.forEach((user, index) => { %>
-
-
-                            <tr>
-
-
-                                <!-- NUMBER -->
-
-                                <td>
-                                    <%= index + 1 %>
-                                </td>
-
-
-
-                                <!-- NAME -->
-
-                                <td>
-
-                                    <strong>
-                                        <%= user.name || "Unknown" %>
-                                    </strong>
-
-                                </td>
-
-
-
-                                <!-- EMAIL -->
-
-                                <td>
-                                    <%= user.email || "-" %>
-                                </td>
-
-
-
-                                <!-- MOBILE NUMBER -->
-
-                                <td>
-
-                                    <% if (user.phone) { %>
-
-                                        <strong>
-                                            📱 <%= user.phone %>
-                                        </strong>
-
-                                    <% } else { %>
-
-                                        -
-
-                                    <% } %>
-
-                                </td>
-
-
-
-                                <!-- ROLE -->
-
-                                <td>
-
-                                    <% if (user.role === "admin") { %>
-
-                                        <span class="admin-status confirmed">
-                                            👑 Admin
-                                        </span>
-
-                                    <% } else { %>
-
-                                        <span class="admin-status">
-                                            👤 Student
-                                        </span>
-
-                                    <% } %>
-
-                                </td>
-
-
-
-                                <!-- BOOKING -->
-
-                                <td>
-
-                                    <%
-                                        const userBookings =
-                                            bookings
-                                                ? bookings.filter(
-                                                    booking =>
-                                                        booking.user &&
-                                                        booking.user._id &&
-                                                        booking.user._id.toString() ===
-                                                        user._id.toString()
-                                                )
-                                                : [];
-                                    %>
-
-
-                                    <% if (userBookings.length > 0) { %>
-
-                                        <strong>
-                                            <%= userBookings.length %>
-                                        </strong>
-
-                                        booking(s)
-
-                                    <% } else { %>
-
-                                        <span>
-                                            No booking
-                                        </span>
-
-                                    <% } %>
-
-                                </td>
-
-
-                            </tr>
-
-
-                        <% }) %>
-
-
-                    </tbody>
-
-
-                </table>
-
-            </div>
-
-
-        <% } %>
-
-
-    </section>
-
-
-
-    <!-- ========================================
-         ALL BOOKINGS
-    ======================================== -->
-
-    <section class="admin-section">
-
-
-        <div class="admin-section-header">
-
-            <p class="eyebrow">
-                BOOKING MANAGEMENT
-            </p>
-
-            <h2>
-                📋 All Bookings
-            </h2>
-
-            <p>
-                See which user has booked which seat.
-            </p>
-
-        </div>
-
-
-
-        <% if (!bookings || bookings.length === 0) { %>
-
-
-            <div class="admin-empty">
-                No bookings found.
-            </div>
-
-
-        <% } else { %>
-
-
-            <div class="admin-table-wrapper">
-
-
-                <table class="admin-table">
-
-
-                    <thead>
-
-                        <tr>
-
-                            <th>
-                                Booking No.
-                            </th>
-
-                            <th>
-                                User
-                            </th>
-
-                            <th>
-                                Mobile Number
-                            </th>
-
-                            <th>
-                                Email
-                            </th>
-
-                            <th>
-                                Seat
-                            </th>
-
-                            <th>
-                                Start Date
-                            </th>
-
-                            <th>
-                                End Date
-                            </th>
-
-                            <th>
-                                Status
-                            </th>
-
-                            <th>
-                                Action
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-
-                    <tbody>
-
-
-                        <% bookings.forEach(booking => { %>
-
-
-                            <tr>
-
-
-                                <!-- BOOKING NUMBER -->
-
-                                <td>
-
-                                    <strong>
-                                        <%= booking.bookingNumber || "N/A" %>
-                                    </strong>
-
-                                </td>
-
-
-
-                                <!-- USER -->
-
-                                <td>
-
-                                    <% if (booking.user) { %>
-
-                                        <%= booking.user.name || "Unknown User" %>
-
-                                    <% } else { %>
-
-                                        User deleted
-
-                                    <% } %>
-
-                                </td>
-
-
-
-                                <!-- MOBILE NUMBER -->
-
-                                <td>
-
-                                    <% if (
-                                        booking.user &&
-                                        booking.user.phone
-                                    ) { %>
-
-                                        <strong>
-                                            📱 <%= booking.user.phone %>
-                                        </strong>
-
-                                    <% } else { %>
-
-                                        -
-
-                                    <% } %>
-
-                                </td>
-
-
-
-                                <!-- EMAIL -->
-
-                                <td>
-
-                                    <% if (booking.user) { %>
-
-                                        <%= booking.user.email || "-" %>
-
-                                    <% } else { %>
-
-                                        -
-
-                                    <% } %>
-
-                                </td>
-
-
-
-                                <!-- SEAT -->
-
-                                <td>
-
-                                    <% if (booking.seat) { %>
-
-                                        <span class="seat-badge">
-
-                                            💺 Seat
-                                            <%= booking.seat.seatNumber %>
-
-                                        </span>
-
-                                    <% } else { %>
-
-                                        -
-
-                                    <% } %>
-
-                                </td>
-
-
-
-                                <!-- START DATE -->
-
-                                <td>
-
-                                    <% if (booking.startDate) { %>
-
-                                        <%= new Date(
-                                            booking.startDate
-                                        ).toLocaleDateString("en-IN") %>
-
-                                    <% } else { %>
-
-                                        N/A
-
-                                    <% } %>
-
-                                </td>
-
-
-
-                                <!-- END DATE -->
-
-                                <td>
-
-                                    <% if (booking.endDate) { %>
-
-                                        <%= new Date(
-                                            booking.endDate
-                                        ).toLocaleDateString("en-IN") %>
-
-                                    <% } else { %>
-
-                                        N/A
-
-                                    <% } %>
-
-                                </td>
-
-
-
-                                <!-- STATUS -->
-
-                                <td>
-
-
-                                    <% if (
-                                        booking.status === "confirmed"
-                                    ) { %>
-
-
-                                        <span
-                                            class="admin-status confirmed"
-                                        >
-                                            🟢 Confirmed
-                                        </span>
-
-
-                                    <% } else { %>
-
-
-                                        <span
-                                            class="admin-status cancelled"
-                                        >
-                                            🔴 Cancelled
-                                        </span>
-
-
-                                    <% } %>
-
-
-                                </td>
-
-
-
-                                <!-- ACTION -->
-
-                                <td>
-
-
-                                    <% if (
-                                        booking.status === "confirmed"
-                                    ) { %>
-
-
-                                        <form
-                                            action="/admin/bookings/<%= booking._id %>/cancel"
-                                            method="POST"
-                                            onsubmit="return confirm('Are you sure you want to cancel this booking?');"
-                                        >
-
-
-                                            <button
-                                                type="submit"
-                                                class="admin-cancel-btn"
-                                            >
-                                                ❌ Cancel
-                                            </button>
-
-
-                                        </form>
-
-
-                                    <% } else { %>
-
-
-                                        <span class="cancelled-text">
-                                            Cancelled
-                                        </span>
-
-
-                                    <% } %>
-
-
-                                </td>
-
-
-                            </tr>
-
-
-                        <% }) %>
-
-
-                    </tbody>
-
-
-                </table>
-
-
-            </div>
-
-
-        <% } %>
-
-
-    </section>
-
-
-
-    <!-- ========================================
-         ALL SEATS
-    ======================================== -->
-
-    <section class="admin-section">
-
-
-        <div class="admin-section-header">
-
-            <p class="eyebrow">
-                SEAT MANAGEMENT
-            </p>
-
-            <h2>
-                💺 All Seats
-            </h2>
-
-            <p>
-                Current seat information.
-            </p>
-
-        </div>
-
-
-
-        <div class="admin-seat-grid">
-
-
-            <% if (seats && seats.length > 0) { %>
-
-
-                <%
-                    const sortedSeats = [...seats].sort(
-                        (a, b) => a.seatNumber - b.seatNumber
-                    );
-                %>
-
-
-                <%
-
-                    for (
-                        let i = 0;
-                        i < sortedSeats.length;
-                        i += 5
-                    ) {
-
-                        let row =
-                            sortedSeats.slice(i, i + 5);
-
-
-                        if ((i / 5) % 2 === 1) {
-
-                            row.reverse();
-
-                        }
-
-                %>
-
-
-                    <% row.forEach(seat => { %>
-
-
-                        <%
-
-                            const seatBooking =
-                                bookings.find(booking => {
-
-                                    if (!booking.seat) {
-                                        return false;
-                                    }
-
-
-                                    if (
-                                        booking.status !==
-                                        "confirmed"
-                                    ) {
-
-                                        return false;
-
-                                    }
-
-
-                                    if (
-                                        booking.seat._id.toString() !==
-                                        seat._id.toString()
-                                    ) {
-
-                                        return false;
-
-                                    }
-
-
-                                    if (
-                                        !booking.startDate ||
-                                        !booking.endDate
-                                    ) {
-
-                                        return false;
-
-                                    }
-
-
-                                    const today =
-                                        new Date();
-
-                                    today.setHours(
-                                        0,
-                                        0,
-                                        0,
-                                        0
-                                    );
-
-
-                                    const startDate =
-                                        new Date(
-                                            booking.startDate
-                                        );
-
-
-                                    const endDate =
-                                        new Date(
-                                            booking.endDate
-                                        );
-
-
-                                    startDate.setHours(
-                                        0,
-                                        0,
-                                        0,
-                                        0
-                                    );
-
-
-                                    endDate.setHours(
-                                        0,
-                                        0,
-                                        0,
-                                        0
-                                    );
-
-
-                                    return (
-                                        startDate <= today &&
-                                        endDate >= today
-                                    );
-
-                                });
-
-                        %>
-
-
-
-                        <!-- SEAT CARD -->
-
-                        <div class="admin-seat-card">
-
-
-                            <div class="admin-seat-number">
-
-                                💺 Seat
-                                <%= seat.seatNumber %>
-
-                            </div>
-
-
-
-                            <% if (seatBooking) { %>
-
-
-                                <span
-                                    class="admin-seat-status"
-                                    style="
-                                        color: #ff4d4d;
-                                        font-weight: 600;
-                                    "
-                                >
-                                    🔴 Booked
-                                </span>
-
-
-                            <% } else { %>
-
-
-                                <span
-                                    class="admin-seat-status"
-                                    style="
-                                        color: #4ade80;
-                                        font-weight: 600;
-                                    "
-                                >
-                                    🟢 Available
-                                </span>
-
-
-                            <% } %>
-
-
+            <% if (!bookings || bookings.length === 0) { %><div class="admin-empty">No bookings found.</div><% } else { %>
+            <div class="admin-table-wrapper"><table class="admin-table">
+                <thead><tr><th>Booking No.</th><th>User</th><th>Seat</th><th>Booking Type</th><th>Dates</th><th>Total</th><th>Approval</th><th>Payment</th><th>Booking Status</th><th>Actions</th></tr></thead>
+                <tbody><% bookings.forEach(booking=>{ %><tr>
+                    <td><strong><%= booking.bookingNumber||"N/A" %></strong></td>
+                    <td><% if(booking.user){ %><strong><%= booking.user.name||"Unknown" %></strong><br><small><%= booking.user.email||"" %></small><br><small><%= booking.user.phone||"" %></small><% }else{ %>User deleted<% } %></td>
+                    <td><% if(booking.seat){ %><span class="seat-badge">Seat <%= booking.seat.seatNumber||"-" %></span><% }else{ %>-<% } %></td>
+                    <td><%= booking.bookingType==="day"?"Day":booking.bookingType==="night"?"Night":"Full Day" %></td>
+                    <td><strong>From:</strong> <%= booking.startDate?new Date(booking.startDate).toLocaleDateString("en-IN"):"-" %><br><strong>To:</strong> <%= booking.endDate?new Date(booking.endDate).toLocaleDateString("en-IN"):"-" %></td>
+                    <td><strong>₹<%= Number(booking.totalAmount||0).toLocaleString("en-IN") %></strong></td>
+                    <td><% if(booking.approvalStatus==="approved"){ %><span class="admin-status confirmed">Approved</span><% }else if(booking.approvalStatus==="rejected"){ %><span class="admin-status cancelled">Rejected</span><% }else if(booking.approvalStatus==="not_required"){ %><span class="admin-status">Manual Assignment</span><% }else{ %><span class="admin-status status-pending">Pending Approval</span><% } %></td>
+                    <td><div class="payment-details"><% if(booking.paymentStatus==="paid"){ %><span class="admin-status status-paid">PAID</span><% }else if(booking.paymentStatus==="failed"){ %><span class="admin-status cancelled">FAILED</span><% }else{ %><span class="admin-status status-pending">UNPAID</span><% } %><br><small>Received: ₹<%= Number(booking.amountPaid||0).toLocaleString("en-IN") %></small><% if(booking.paymentMethod){ %><br><small>Method: <%= booking.paymentMethod %></small><% } %><% if(booking.paymentReference){ %><br><small>Ref: <%= booking.paymentReference %></small><% } %></div></td>
+                    <td><% if(booking.status==="confirmed"){ %><span class="admin-status confirmed">Confirmed</span><% }else if(booking.status==="cancelled"){ %><span class="admin-status cancelled">Cancelled</span><% }else{ %><span class="admin-status status-pending">Pending</span><% } %></td>
+                    <td><div class="admin-actions">
+                        <% if(booking.status!=="cancelled"&&booking.approvalStatus==="pending"){ %>
+                        <form action="/admin/bookings/<%= booking._id %>/approve" method="POST" onsubmit="return confirm('Approve this booking request?');"><button type="submit" class="admin-approve-btn">Approve</button></form>
+                        <form action="/admin/bookings/<%= booking._id %>/reject" method="POST" onsubmit="return confirm('Reject this booking request?');"><button type="submit" class="admin-reject-btn">Reject</button></form>
+                        <% } %>
+                        <% if(booking.status!=="cancelled"&&booking.approvalStatus==="approved"&&booking.paymentStatus!=="paid"){ %><span class="admin-help-text">Awaiting student payment</span><% } %>
+                        <% if(booking.status==="confirmed"){ %><form action="/admin/bookings/<%= booking._id %>/cancel" method="POST" onsubmit="return confirm('Cancel this booking? If paid, any refund must be handled separately.');"><button type="submit" class="admin-cancel-btn">Cancel</button></form><% } %>
+                        <% if(booking.status==="cancelled"){ %><span class="admin-help-text">No actions available</span><% } %>
+                    </div></td>
+                </tr><% }) %></tbody>
+            </table></div><% } %>
+        </section>
+
+        <!-- ALL SEATS -->
+        <section class="admin-section">
+            <div class="admin-section-header"><p class="eyebrow">SEAT MANAGEMENT</p><h2>💺 All Seats</h2><p>Seat status for the current date.</p></div>
+            <div class="admin-seat-grid">
+                <% if(seats&&seats.length>0){ %>
+                    <% const sortedSeats=[...seats].sort((a,b)=>Number(a.seatNumber)-Number(b.seatNumber)); const today=new Date(); today.setHours(0,0,0,0); %>
+                    <% sortedSeats.forEach(seat=>{ %>
+                        <% const seatBooking=(bookings||[]).find(booking=>{if(!booking.seat||booking.status!=="confirmed")return false;const bookingSeatId=booking.seat._id?booking.seat._id.toString():booking.seat.toString();if(bookingSeatId!==seat._id.toString())return false;if(!booking.startDate||!booking.endDate)return false;const startDate=new Date(booking.startDate);const endDate=new Date(booking.endDate);startDate.setHours(0,0,0,0);endDate.setHours(23,59,59,999);return startDate<=today&&endDate>=today;}); %>
+                        <div class="admin-seat-card"><div class="admin-seat-number">💺 Seat <%= seat.seatNumber %></div>
+                            <% if(seatBooking){ %><span class="admin-seat-status" style="color:#dc2626;">🔴 Booked</span><% if(seatBooking.bookingType){ %><p><%= seatBooking.bookingType %></p><% } %>
+                            <% }else{ %><span class="admin-seat-status" style="color:#16a34a;">🟢 Available</span><% } %>
                         </div>
-
-
                     <% }) %>
+                <% }else{ %><div class="admin-empty">No seats found.</div><% } %>
+            </div>
+        </section>
+    </main>
+    <%- include("../includes/footer.ejs") %>
 
+    <script>
+    function confirmDeleteAllBookings(form) {
+    if (!confirm("Kya tum saari bookings delete karna chahte ho?")) {
+        return false;
+    }
 
-                <% } %>
+    if (!confirm("Pakka delete karna hai?")) {
+        return false;
+    }
 
+    form.querySelector('input[name="confirmDelete"]').value = "DELETE ALL BOOKINGS";
+    return true;
+}
 
-            <% } else { %>
+// Server-saved prices. These values are also used by the calculator.
+window.kavikaPricing = {
+    day: <%- JSON.stringify(Number(pricing.day) || 500) %>,
+    night: <%- JSON.stringify(Number(pricing.night) || 300) %>,
+    fullDay: <%- JSON.stringify(Number(pricing.fullDay) || 650) %>
+};
+        const startDateInput = document.getElementById("startDate");
+        const endDateInput = document.getElementById("endDate");
+        const bookingTypeInput = document.getElementById("bookingType");
+        const paymentStatusInput = document.getElementById("paymentStatus");
+        const paymentMethodInput = document.getElementById("paymentMethod");
+        const amountPaidInput = document.getElementById("amountPaid");
 
+        const calculatorBookingType = document.getElementById("calculatorBookingType");
+        const bookingDurationDisplay = document.getElementById("bookingDuration");
+        const pricePerDayDisplay = document.getElementById("pricePerDay");
+        const bookingTotalDisplay = document.getElementById("bookingTotalDisplay");
+        const amountReceivedDisplay = document.getElementById("amountReceivedDisplay");
+        const remainingBalanceDisplay = document.getElementById("remainingBalanceDisplay");
+        const calculatorMessage = document.getElementById("calculatorMessage");
 
-                <div class="admin-empty">
-                    No seats found.
-                </div>
+        const pricing = window.kavikaPricing;
+        let calculatedBookingTotal = 0;
 
+        function formatRupees(amount) {
+            return "₹" + Number(amount || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 });
+        }
 
-            <% } %>
+        function parseDateInput(value) {
+            if (!value) return null;
+            const parts = value.split("-").map(Number);
+            if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
+            const [year, month, day] = parts;
+            const date = new Date(year, month - 1, day);
+            if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) return null;
+            return date;
+        }
 
+        function getInclusiveDays(startDate, endDate) {
+            const start = Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+            const end = Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+            return Math.round((end - start) / 86400000) + 1;
+        }
 
-        </div>
+        function updateCalculator() {
+            const bookingType = bookingTypeInput.value;
+            const labels = { day: "Day", night: "Night", fullDay: "Full Day + Night" };
+            const monthlyPrice = Number(pricing[bookingType]);
+            const startDate = parseDateInput(startDateInput.value);
+            const endDate = parseDateInput(endDateInput.value);
+            const validPrice = Number.isFinite(monthlyPrice) && monthlyPrice > 0;
 
+            calculatorBookingType.textContent = labels[bookingType] || "Not selected";
+            pricePerDayDisplay.textContent = validPrice ? formatRupees(monthlyPrice / 30) : "Unavailable";
 
-    </section>
+            if (!startDate || !endDate) {
+                calculatedBookingTotal = 0;
+                bookingDurationDisplay.textContent = "Select dates";
+                bookingTotalDisplay.textContent = formatRupees(0);
+                calculatorMessage.textContent = "Start Date aur End Date select karo.";
+                calculatorMessage.classList.remove("error");
+            } else if (endDate < startDate) {
+                calculatedBookingTotal = 0;
+                bookingDurationDisplay.textContent = "Invalid dates";
+                bookingTotalDisplay.textContent = formatRupees(0);
+                calculatorMessage.textContent = "End Date, Start Date se pehle nahi ho sakti.";
+                calculatorMessage.classList.add("error");
+            } else if (!validPrice) {
+                calculatedBookingTotal = 0;
+                bookingDurationDisplay.textContent = "Price unavailable";
+                bookingTotalDisplay.textContent = formatRupees(0);
+                calculatorMessage.textContent = "Is booking type ki valid pricing available nahi hai.";
+                calculatorMessage.classList.add("error");
+            } else {
+                const days = getInclusiveDays(startDate, endDate);
+                calculatedBookingTotal = Math.max(1, Math.round((monthlyPrice / 30) * days));
+                bookingDurationDisplay.textContent = days + (days === 1 ? " day" : " days");
+                bookingTotalDisplay.textContent = formatRupees(calculatedBookingTotal);
+                calculatorMessage.classList.remove("error");
+            }
 
+            const isPaid = paymentStatusInput.value === "paid";
+            const isComplimentary = isPaid && paymentMethodInput.value === "complimentary";
+            let received = 0;
+            if (isPaid && !isComplimentary) {
+                const entered = Number(amountPaidInput.value);
+                received = Number.isFinite(entered) ? Math.max(0, entered) : 0;
+            }
+            amountReceivedDisplay.textContent = formatRupees(received);
+            remainingBalanceDisplay.textContent = formatRupees(Math.max(0, calculatedBookingTotal - received));
 
-</main>
+            if (isComplimentary) {
+                calculatorMessage.textContent = "Complimentary booking selected. Payment amount is ₹0.";
+                calculatorMessage.classList.remove("error");
+            } else if (isPaid && received < calculatedBookingTotal && calculatedBookingTotal > 0) {
+                calculatorMessage.textContent = "Received amount total se kam hai. Paid status tabhi select karo jab full payment mil jaye.";
+                calculatorMessage.classList.add("error");
+            } else if (isPaid && calculatedBookingTotal > 0) {
+                calculatorMessage.textContent = "Full payment received. Amount verify karke booking assign karo.";
+                calculatorMessage.classList.remove("error");
+            } else if (calculatedBookingTotal > 0) {
+                calculatorMessage.textContent = "Payment pending hai. Customer se " + formatRupees(calculatedBookingTotal) + " lena baaki hai.";
+                calculatorMessage.classList.remove("error");
+            }
+        }
 
+        function updatePaymentFields() {
+            const isPaid = paymentStatusInput.value === "paid";
+            paymentMethodInput.required = isPaid;
 
+            if (!isPaid) {
+                paymentMethodInput.value = "";
+                amountPaidInput.value = "0";
+            } else if (paymentMethodInput.value === "complimentary") {
+                amountPaidInput.value = "0";
+            } else if (Number(amountPaidInput.value) === 0 && calculatedBookingTotal > 0) {
+                // This only fills the field; it does not confirm that payment was received.
+                amountPaidInput.value = String(calculatedBookingTotal);
+            }
+            updateCalculator();
+        }
 
-<!-- ========================================
-     FOOTER
-======================================== -->
+        startDateInput.addEventListener("change", function () {
+            endDateInput.min = this.value;
+            if (endDateInput.value && endDateInput.value < this.value) endDateInput.value = this.value;
+            updateCalculator();
+        });
+        endDateInput.addEventListener("change", updateCalculator);
+        bookingTypeInput.addEventListener("change", updateCalculator);
+        paymentStatusInput.addEventListener("change", updatePaymentFields);
+        paymentMethodInput.addEventListener("change", function () {
+            if (paymentStatusInput.value === "paid" && this.value === "complimentary") {
+                amountPaidInput.value = "0";
+            } else if (paymentStatusInput.value === "paid" && Number(amountPaidInput.value) === 0 && calculatedBookingTotal > 0) {
+                amountPaidInput.value = String(calculatedBookingTotal);
+            }
+            updateCalculator();
+        });
+        amountPaidInput.addEventListener("input", updateCalculator);
 
-<%- include("../includes/footer.ejs") %>
-
-
+        updateCalculator();
+    </script>
+    
 </body>
-
 </html>
-

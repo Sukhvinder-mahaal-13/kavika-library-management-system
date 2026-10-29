@@ -7,7 +7,6 @@ const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema(
     {
-
         // ========================================
         // USER
         // ========================================
@@ -18,7 +17,6 @@ const bookingSchema = new mongoose.Schema(
             required: true,
             index: true
         },
-
 
         // ========================================
         // SEAT
@@ -31,7 +29,6 @@ const bookingSchema = new mongoose.Schema(
             index: true
         },
 
-
         // ========================================
         // BOOKING NUMBER
         // ========================================
@@ -43,23 +40,17 @@ const bookingSchema = new mongoose.Schema(
             trim: true
         },
 
-
         // ========================================
         // BOOKING TYPE
         // ========================================
 
         bookingType: {
             type: String,
-            enum: [
-                "day",
-                "night",
-                "fullDay"
-            ],
+            enum: ["day", "night", "fullDay"],
             required: true,
             trim: true,
             index: true
         },
-
 
         // ========================================
         // START DATE
@@ -71,7 +62,6 @@ const bookingSchema = new mongoose.Schema(
             index: true
         },
 
-
         // ========================================
         // END DATE
         // ========================================
@@ -82,9 +72,8 @@ const bookingSchema = new mongoose.Schema(
             index: true
         },
 
-
         // ========================================
-        // DURATION IN DAYS
+        // DURATION
         // ========================================
 
         durationDays: {
@@ -93,20 +82,14 @@ const bookingSchema = new mongoose.Schema(
             min: 1
         },
 
-
-        // ========================================
-        // DURATION IN MONTHS
-        // ========================================
-
         durationMonths: {
             type: Number,
             default: 0,
             min: 0
         },
 
-
         // ========================================
-        // PRICE PER MONTH
+        // PRICING
         // ========================================
 
         pricePerMonth: {
@@ -115,17 +98,49 @@ const bookingSchema = new mongoose.Schema(
             min: 0
         },
 
-
-        // ========================================
-        // TOTAL AMOUNT
-        // ========================================
-
         totalAmount: {
             type: Number,
             required: true,
-            min: 1
+            min: 0
         },
 
+        // ========================================
+        // ADMIN APPROVAL
+        // ========================================
+
+        approvalStatus: {
+            type: String,
+            enum: [
+                "not_required",
+                "pending",
+                "approved",
+                "rejected"
+            ],
+            default: "pending",
+            index: true
+        },
+
+        approvedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            default: null
+        },
+
+        approvedAt: {
+            type: Date,
+            default: null
+        },
+
+        rejectedAt: {
+            type: Date,
+            default: null
+        },
+
+        rejectionReason: {
+            type: String,
+            default: "",
+            trim: true
+        },
 
         // ========================================
         // PAYMENT STATUS
@@ -142,9 +157,56 @@ const bookingSchema = new mongoose.Schema(
             index: true
         },
 
+        // ========================================
+        // PAYMENT METHOD
+        // ========================================
+
+        paymentMethod: {
+            type: String,
+            enum: [
+                "razorpay",
+                "cash",
+                "upi",
+                "bank_transfer",
+                "complimentary",
+                "other"
+            ],
+            default: null
+        },
+
+        // Actual amount received
+
+        amountPaid: {
+            type: Number,
+            default: 0,
+            min: 0
+        },
+
+        paymentReceivedAt: {
+            type: Date,
+            default: null
+        },
+
+        paymentReceivedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            default: null
+        },
+
+        paymentReference: {
+            type: String,
+            default: "",
+            trim: true
+        },
+
+        paymentNotes: {
+            type: String,
+            default: "",
+            trim: true
+        },
 
         // ========================================
-        // RAZORPAY ORDER ID
+        // RAZORPAY ORDER
         // ========================================
 
         razorpayOrderId: {
@@ -153,9 +215,8 @@ const bookingSchema = new mongoose.Schema(
             trim: true
         },
 
-
         // ========================================
-        // RAZORPAY PAYMENT ID
+        // RAZORPAY PAYMENT
         // ========================================
 
         razorpayPaymentId: {
@@ -163,7 +224,6 @@ const bookingSchema = new mongoose.Schema(
             default: null,
             trim: true
         },
-
 
         // ========================================
         // RAZORPAY SIGNATURE
@@ -175,6 +235,65 @@ const bookingSchema = new mongoose.Schema(
             trim: true
         },
 
+        // ========================================
+        // RENEWAL TRACKING
+        // ========================================
+
+        isRenewal: {
+            type: Boolean,
+            default: false,
+            index: true
+        },
+
+        renewedFrom: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Booking",
+            default: null
+        },
+
+        // ========================================
+        // RECEIPT
+        // ========================================
+
+        receiptNumber: {
+            type: String,
+            default: null,
+            trim: true
+        },
+
+        receiptGeneratedAt: {
+            type: Date,
+            default: null
+        },
+
+        // ========================================
+        // WHATSAPP NOTIFICATION TRACKING
+        // ========================================
+
+        whatsappConfirmationSent: {
+            type: Boolean,
+            default: false
+        },
+
+        whatsappConfirmationSentAt: {
+            type: Date,
+            default: null
+        },
+
+        expiryReminder7DaysSentAt: {
+            type: Date,
+            default: null
+        },
+
+        expiryReminder3DaysSentAt: {
+            type: Date,
+            default: null
+        },
+
+        expiryReminder1DaySentAt: {
+            type: Date,
+            default: null
+        },
 
         // ========================================
         // BOOKING STATUS
@@ -189,33 +308,39 @@ const bookingSchema = new mongoose.Schema(
             ],
             default: "pending",
             index: true
+        },
+
+        // ========================================
+        // CANCELLATION
+        // ========================================
+
+        cancelledAt: {
+            type: Date,
+            default: null
+        },
+
+        cancelledBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            default: null
+        },
+
+        cancellationReason: {
+            type: String,
+            default: "",
+            trim: true
         }
-
     },
-
-    // ========================================
-    // TIMESTAMPS
-    // ========================================
-
     {
         timestamps: true
     }
 );
 
-
 // ========================================
 // DATE VALIDATION
 // ========================================
-// Mongoose 9 compatible.
-//
-// IMPORTANT:
-// Yahan next() use nahi kiya gaya.
-// Validation fail hone par Error throw
-// kiya ja raha hai.
-// ========================================
 
 bookingSchema.pre("validate", function () {
-
     if (
         this.startDate &&
         this.endDate &&
@@ -225,9 +350,7 @@ bookingSchema.pre("validate", function () {
             "End date cannot be before start date."
         );
     }
-
 });
-
 
 // ========================================
 // BOOKING OVERLAP INDEX
@@ -240,7 +363,6 @@ bookingSchema.index({
     endDate: 1
 });
 
-
 // ========================================
 // USER BOOKING INDEX
 // ========================================
@@ -250,16 +372,24 @@ bookingSchema.index({
     createdAt: -1
 });
 
+// ========================================
+// APPROVAL QUEUE INDEX
+// ========================================
+
+bookingSchema.index({
+    approvalStatus: 1,
+    status: 1,
+    createdAt: -1
+});
 
 // ========================================
-// BOOKING MODEL
+// MODEL
 // ========================================
 
 const Booking = mongoose.model(
     "Booking",
     bookingSchema
 );
-
 
 // ========================================
 // EXPORT
